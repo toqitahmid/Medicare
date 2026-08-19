@@ -1,9 +1,13 @@
+'use client'
+
+import ThemeToggle from "./ThemeToggle";
+
 
 const MainNavbar = () => {
     return (
-        <div>
-            
-        </div>
+      <div>
+        <ThemeToggle></ThemeToggle>
+      </div>
     );
 };
 
