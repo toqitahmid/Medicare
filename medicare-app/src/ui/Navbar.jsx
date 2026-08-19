@@ -63,7 +63,7 @@ export default function MainNavbar() {
             <ThemeToggle></ThemeToggle>
           </div>
 
-          <Link href={''} className="px-5 py-1 mb-1 border-2 rounded-2xl cursor-pointer" color="primary">
+          <Link href={'/login'} className="px-5 py-1 mb-1 border-2 rounded-2xl cursor-pointer" color="primary">
             Login
           </Link>
 

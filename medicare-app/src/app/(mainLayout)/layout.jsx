@@ -1,11 +1,13 @@
 import MainFooter from '@/ui/Footer';
 import MainNavbar from '@/ui/Navbar';
+import { ToastProvider } from '@heroui/react';
 import React from 'react';
 
 const Mainlayout = ({children}) => {
     return (
         <div className='flex flex-col min-h-screen'>
             <MainNavbar></MainNavbar>
+            <ToastProvider></ToastProvider>
             <main className='flex-grow min-h-screen'>{children}</main>
             <MainFooter></MainFooter>
         </div>
