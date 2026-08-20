@@ -1,5 +1,7 @@
 'use server';
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
+
+
 export async function getAllDoctors (params = {}) {
     try{
         const query = new URLSearchParams();
@@ -25,5 +27,21 @@ export async function getAllDoctors (params = {}) {
     catch(err){
         console.error(err);
         return [];
+    }
+}
+
+
+export async function getDoctorById(doctorId) {
+    try{
+        const res = await fetch(`${baseUrl}/api/doctors/${doctorId}`)
+        if(!res.ok){
+            console.error(`failed to fetch doctor ${res.status}`);
+            return null;
+        }
+        return res.json();
+    }
+    catch(err){
+        console.error(err);
+        return null;
     }
 }
