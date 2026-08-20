@@ -3,27 +3,41 @@
 import React, { useState } from "react";
 import { Button } from "@heroui/react";
 import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import Link from "next/link";
+import { authClient } from "../lib/auth-client";
 
 export default function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Better Auth session hook
+  const { data: session, isPending } = authClient.useSession();
 
   const menuItems = [
     { label: "Home", href: "/" },
     { label: "Find Doctors", href: "/nab/find-doctors" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
-    { label: "Dashboard", href: "/dashboard" },
+    ...(session ? [{ label: "Dashboard", href: "/dashboard" }] : []),
   ];
+
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+        },
+      },
+    });
+  };
 
   return (
     <header className="w-full px-4 pt-4 relative z-50">
-      {/* Floating Navbar Container */}
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border border-divider px-6 shadow-lg backdrop-blur-md bg-background/80 text-foreground">
-        {/* Brand / Logo Section */}
+        {/* Brand / Logo */}
         <Link
           href="/"
           className="flex items-center gap-2 text-2xl font-black tracking-tight text-foreground hover:opacity-90 transition-opacity"
@@ -32,22 +46,26 @@ export default function MainNavbar() {
             +
           </div>
           <span>
-            Doc<span className="text-primary">Care</span>
+            Medi<span className="text-primary">Care</span>
           </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-6">
-          {menuItems.map((item, index) => {
-            const isActive = pathname === item.href;
+          {menuItems.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+
             return (
               <Link
-                key={index}
+                key={item.href}
                 href={item.href}
-                className={`text-sm font-medium transition-colors duration-200 ${
+                className={`text-sm transition-all duration-200 ${
                   isActive
-                    ? "text-primary font-semibold"
-                    : "text-default-500 hover:text-foreground"
+                    ? "text-primary font-bold border-b-2 border-primary pb-1"
+                    : "text-default-500 hover:text-foreground font-medium"
                 }`}
               >
                 {item.label}
@@ -56,20 +74,38 @@ export default function MainNavbar() {
           })}
         </div>
 
-        {/* Action Area: Theme Toggle & Login */}
+        {/* Action Controls */}
         <div className="flex items-center gap-3">
-          {/* Theme Toggle Switch / Button Placeholder */}
-          <div id="theme-toggle" className="border-2 rounded-full  px-2 pt-1 ">
-            <ThemeToggle></ThemeToggle>
+          <div id="theme-toggle" className="border rounded-full px-2 pt-1">
+            <ThemeToggle />
           </div>
 
-          <Link href={'/login'} className="px-5 py-1 mb-1 border-2 rounded-2xl cursor-pointer" color="primary">
-            Login
-          </Link>
+          {!isPending && (
+            <>
+              {session ? (
+                <Button
+                  onClick={handleSignOut}
+                  color="danger"
+                  variant="flat"
+                  size="sm"
+                  className="rounded-2xl font-medium"
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Link
+                  href="/login"
+                  className="px-5 py-1.5 border rounded-2xl text-sm font-medium hover:bg-default-100 transition-colors"
+                >
+                  Login
+                </Link>
+              )}
+            </>
+          )}
 
-          {/* Mobile Hamburger Toggle Button */}
+          {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-default-500 hover:text-foreground focus:outline-none transition-colors"
+            className="md:hidden p-2 text-default-500 hover:text-foreground focus:outline-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -82,18 +118,22 @@ export default function MainNavbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Panel */}
+      {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="absolute top-24 left-4 right-4 md:hidden flex flex-col gap-4 rounded-2xl border border-divider bg-background/95 p-6 shadow-xl backdrop-blur-lg animate-in fade-in slide-in-from-top-4 duration-200">
-          {menuItems.map((item, index) => {
-            const isActive = pathname === item.href;
+        <div className="absolute top-24 left-4 right-4 md:hidden flex flex-col gap-4 rounded-2xl border border-divider bg-background/95 p-6 shadow-xl backdrop-blur-lg">
+          {menuItems.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+
             return (
               <Link
-                key={index}
+                key={item.href}
                 href={item.href}
                 className={`w-full text-lg py-2 border-b border-divider transition-colors ${
                   isActive
-                    ? "text-primary font-semibold"
+                    ? "text-primary font-bold"
                     : "text-default-600 hover:text-foreground"
                 }`}
                 onClick={() => setIsMenuOpen(false)}

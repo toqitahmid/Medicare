@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+
+
+@layer base {
+  :root {
+    --bg-main: #ffffff;
+    --bg-card: #ffffff;
+    --bg-subtle: #f9fafb;
+    --text-main: #111827;
+    --text-subtle: #6b7280;
+    --border-color: #e5e7eb;
+  }
+
+  .dark {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-subtle: #334155;
+    --text-main: #f8fafc;
+    --text-subtle: #94a3b8;
+    --border-color: #334155;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
