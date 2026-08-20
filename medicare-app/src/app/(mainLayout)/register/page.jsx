@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   Card,
@@ -13,15 +12,20 @@ import {
   Form,
 } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
+import { authClient } from "@/app/lib/auth-client";
+import { addToast } from "@heroui/toast";
+import { useRouter } from "next/navigation";
+import { toast, Zoom } from "react-toastify";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "user",
+    role: "patient",
     phone: "",
     photo: "",
     gender: "",
@@ -58,7 +62,7 @@ export default function RegisterPage() {
       newErrors.password = "Password must be at least 6 characters long.";
     }
 
-    if (formData.role === "user") {
+    if (formData.role === "patient") {
       if (!formData.name) newErrors.name = "Name is required.";
       if (!formData.phone) newErrors.phone = "Phone number is required.";
       if (!formData.gender) newErrors.gender = "Gender is required.";
@@ -94,7 +98,53 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      console.log("Submitting:", formData);
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+        name: formData.role === "doctor" ? formData.doctorName : formData.name,
+        role: formData.role,
+        ...(formData.role === "patient"
+          ? {
+              role: 'patient',
+              phone: formData.phone,
+              gender: formData.gender,
+              photo: formData.photo,
+            }
+          : {
+              role: 'doctor',
+              specialization: formData.specialization,
+              qualifications: formData.qualifications,
+              experience: formData.experience,
+              consultationFee: formData.consultationFee,
+              hospitalName: formData.hospitalName,
+              profileImage: formData.profileImage,
+              availableDays: formData.availableDays,
+              availableSlots: formData.availableSlots,
+            }),
+        callbackURL: "/",
+      };
+      if(payload){
+        toast.success("You registered successfully!", {
+          position: "top-center",
+          autoClose: 2500,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+          transition: Zoom,
+        });
+      }
+      console.log("SENDING PAYLOAD:", payload);
+      const { error } = await authClient.signUp.email(payload);
+      router.push("/");
+
+      if (error) throw new Error(error.message || "Registration failed");
+
+      addToast({
+        title: "Registration Complete",
+        color: "success",
+      });
     } catch (err) {
       const message = err.message || "Registration failed. Please try again.";
       setErrors((prev) => ({ ...prev, form: message }));
@@ -126,7 +176,7 @@ export default function RegisterPage() {
               onChange={handleChange("role")}
               className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
             >
-              <option value="user">User</option>
+              <option value="patient">Patient</option>
               <option value="doctor">Doctor</option>
             </select>
           </div>
@@ -198,7 +248,7 @@ export default function RegisterPage() {
           </TextField>
 
           {/* USER SPECIFIC FIELDS */}
-          {formData.role === "user" && (
+          {formData.role === "patient" && (
             <>
               <TextField
                 name="name"

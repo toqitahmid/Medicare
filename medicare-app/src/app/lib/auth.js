@@ -25,6 +25,8 @@ export const auth = betterAuth({
             if (user.role === "doctor") {
               await db.collection("doctors").insertOne({
                 userId: user.id,
+                name: user.name,
+                role: body.role,
                 specialization: body.specialization,
                 qualifications: body.qualifications,
                 experience: body.experience,
@@ -39,6 +41,8 @@ export const auth = betterAuth({
             } else {
               await db.collection("patients").insertOne({
                 userId: user.id,
+                role: body.role,
+                name: user.name,
                 phone: body.phone,
                 gender: body.gender,
                 photo: body.photo,
