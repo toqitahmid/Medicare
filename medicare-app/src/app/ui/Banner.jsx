@@ -17,18 +17,11 @@ const trustPoints = [
   { icon: Stethoscope, label: "Better health, made simpler" },
 ];
 
-const specializations = [
-  { icon: HeartPulse, name: "Cardiology" },
-  { icon: Brain, name: "Neurology" },
-  { icon: Activity, name: "Orthopedic" },
-  { icon: Baby, name: "Pediatrics" },
-  { icon: Sparkles, name: "Dermatology" },
-];
-
 const Banner = () => {
   return (
-    <div className="overflow-hidden">
-      <section className="relative mx-4 mt-4 min-h-[min(72vh,680px)] overflow-hidden rounded-[2rem] bg-[#123b42] text-white sm:mx-6 lg:mx-auto lg:max-w-7xl">
+    <div className="overflow-hidden mt-10">
+      {/* Updated section: Removed mx margins, mt margin, max-w limits, and rounded corners */}
+      <section className="relative w-full min-h-[min(72vh,680px)] overflow-hidden bg-[#123b42] text-white">
         <Image
           src="/assets/banner.jpg"
           alt="Medical team working together in an operating room"
@@ -38,7 +31,8 @@ const Banner = () => {
         />
         <div className="absolute inset-0 bg-[#06272d]/65" />
 
-        <div className="relative flex min-h-[min(72vh,680px)] max-w-3xl flex-col justify-end px-6 py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-20">
+        {/* Content container remains constrained to match the rest of your site layout */}
+        <div className="relative mx-auto flex min-h-[min(72vh,680px)] max-w-7xl flex-col justify-end  py-10 sm:px-10 sm:py-14 lg:px-16 lg:py-20">
           <p className="mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">
             <span className="h-px w-10 bg-cyan-200" />
             Your health, our purpose
@@ -87,48 +81,6 @@ const Banner = () => {
               {label}
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="border-y border-divider bg-default-50/60 px-4 py-12 sm:px-6 sm:py-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                Find focused care
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-                Medical specializations
-              </h2>
-            </div>
-            <Link
-              href="/nab/find-doctors"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
-            >
-              Explore all doctors
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {specializations.map(({ icon: Icon, name }) => (
-              <Link
-                key={name}
-                href={`/nab/find-doctors?specialization=${name}`}
-                className="group flex items-center justify-between border border-divider bg-background rounded-2xl p-5 transition-all hover:-translate-y-1 hover:border-primary hover:shadow-md"
-              >
-                <span className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="text-sm font-semibold text-foreground">
-                    {name}
-                  </span>
-                </span>
-                <ArrowRight className="h-4 w-4 text-default-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
     </div>
