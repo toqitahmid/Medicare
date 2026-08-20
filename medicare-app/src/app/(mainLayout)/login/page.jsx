@@ -14,11 +14,14 @@ import {
   Form,
 } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
-// import { authClient } from "@/lib/auth-client";
+import { toast, Zoom } from "react-toastify";
+import { authClient } from "@/app/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -58,13 +61,29 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { error } = await authClient.signIn.email({
+      const payload = {
         email: formData.email,
         password: formData.password,
-        callbackURL: "/dashboard",
-      });
+      };
+      const { error } = await authClient.signIn.email(payload);
+
+      
 
       if (error) throw new Error(error.message || "Authentication failed");
+
+      if (payload) {
+        toast.success("You login successfully!", {
+          position: "top-center",
+          autoClose: 2500,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          theme: "dark",
+          transition: Zoom,
+        });
+        router.push('/');
+      }
     } catch (err) {
       const message = err.message || "Invalid credentials. Please try again.";
       setErrors((prev) => ({ ...prev, form: message }));
@@ -156,12 +175,6 @@ export default function LoginPage() {
             <Checkbox defaultSelected className="text-sm font-medium">
               Remember me
             </Checkbox>
-            {/* <Link
-              href="#"
-              className="font-medium text-primary hover:underline text-sm"
-            >
-              Forgot password?
-            </Link> */}
           </div>
 
           {errors.form && (

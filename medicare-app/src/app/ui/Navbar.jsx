@@ -13,7 +13,7 @@ export default function MainNavbar() {
 
   const menuItems = [
     { label: "Home", href: "/" },
-    { label: "Find Doctors", href: "/find-doctors" },
+    { label: "Find Doctors", href: "/nab/find-doctors" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
     { label: "Dashboard", href: "/dashboard" },
