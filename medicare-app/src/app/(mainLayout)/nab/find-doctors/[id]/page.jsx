@@ -1,5 +1,6 @@
 import { getDoctorById } from "@/app/lib/api/doctors";
 import Image from "next/image";
+import Link from "next/link";
 
 const DoctorsDetailsPage = async ({ params }) => {
   const { id } = await params;
@@ -128,9 +129,12 @@ const DoctorsDetailsPage = async ({ params }) => {
 
       {/* Action CTA */}
       <div className="mt-8 text-center">
-        <button className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 rounded-xl transition duration-200 shadow-md">
+        <Link
+          href={`${id}/bookAppointment`}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 rounded-xl transition duration-200 shadow-md"
+        >
           Book Appointment
-        </button>
+        </Link>
       </div>
     </main>
   );
