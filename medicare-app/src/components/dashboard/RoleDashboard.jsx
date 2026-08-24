@@ -18,7 +18,6 @@ import {
   Users,
   Stethoscope,
 } from "lucide-react";
-
 const roleTabs = {
   patient: [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -149,25 +148,14 @@ export default function RoleDashboard() {
           {/* User Area */}
           <div className="flex items-center gap-3">
             {/* User Profile */}
-            <div className="flex items-center gap-3 rounded-xl border border-divider bg-default-50/50 px-2.5 py-1.5">
-              <Avatar
-                src={user?.image || undefined}
-                name={user?.name || "User"}
-                size="sm"
-                isBordered
-                color="primary"
-              />
-
-              <div className="hidden text-left md:flex md:flex-col">
-                <span className="max-w-[160px] truncate text-xs font-semibold leading-tight">
-                  {user?.name || "User"}
-                </span>
-
-                <span className="max-w-[180px] truncate text-[10px] leading-tight text-default-500">
-                  {user?.email}
-                </span>
-              </div>
-            </div>
+              <Avatar>
+                <Avatar.Image
+                src={session?.user?.image}
+                className="size-10 rounded-full"
+                  alt="John Doe"
+                />
+                <Avatar.Fallback>JD</Avatar.Fallback>
+              </Avatar>
 
             {/* Home */}
             <Link
@@ -277,8 +265,7 @@ export default function RoleDashboard() {
 
               {/* Content */}
               <div className="p-5 sm:p-7 lg:p-8">
-                
-                  <TabContent activeTabId={selectedTab} />
+                <TabContent activeTabId={selectedTab} />
               </div>
             </div>
           </section>
