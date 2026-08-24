@@ -46,6 +46,7 @@ export const auth = betterAuth({
                 phone: body.phone,
                 gender: body.gender,
                 photo: body.photo,
+                plan: 'N/A',
                 createdAt: new Date(),
               });
             }
