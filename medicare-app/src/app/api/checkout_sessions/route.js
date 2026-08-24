@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
+import { stripe } from "@/app/lib/stripe";
 
-import { stripe } from "../../../lib/stripe";
 
 export async function POST() {
   try {
@@ -13,14 +13,12 @@ export async function POST() {
       line_items: [
         {
           // Provide the exact Price ID (for example, price_1234) of the product you want to sell
-          price: "{{PRICE_ID}}",
+          price: "price_1U7oU4AZBN3J3tTaeeOgfcQ4",
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      // Provide a name (for example, hosted_web_0001) to label this Checkout integration and measure its conversion independently
-      integration_identifier: "{{INTEGRATION_ID}}",
+      success_url: `${origin}/plans/success?session_id={CHECKOUT_SESSION_ID}`,
     });
     return NextResponse.redirect(session.url, 303);
   } catch (err) {
