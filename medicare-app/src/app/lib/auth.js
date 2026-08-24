@@ -13,6 +13,8 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: { type: "string", required: true },
+      photo: {type: "string", required: false},
+      plan: {type: "string", required: false, defaultValue: "N/A"}
     },
   },
   databaseHooks: {
