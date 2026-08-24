@@ -1,8 +1,11 @@
 "use client";
 
+import { createAppointment } from "@/app/lib/actions/appointment";
 import { useState } from "react";
+import { toast, Zoom } from "react-toastify";
 
 export default function AppointmentForm({ patient, doctor }) {
+  
   const [formData, setFormData] = useState({
     appointmentDate: "",
     appointmentTime: "",
@@ -21,22 +24,24 @@ export default function AppointmentForm({ patient, doctor }) {
       appointmentDate: formData.appointmentDate,
       appointmentTime: formData.appointmentTime,
       symptoms: formData.symptoms,
-      paymentStatus: formData.paymentStatus,
       appointmentStatus: "Pending",
     };
 
     try {
-      const response = await fetch("/api/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        alert("Appointment booked successfully!");
-      } else {
-        alert("Failed to book appointment.");
-      }
+      // if(patient.plan === "N/A"){
+      //   toast.success("You have to buy a plan!", {
+      //             position: "top-center",
+      //             autoClose: 2500,
+      //             hideProgressBar: true,
+      //             closeOnClick: false,
+      //             pauseOnHover: false,
+      //             draggable: true,
+      //             theme: "dark",
+      //             transition: Zoom,
+      //           });
+      //     return;
+      // }
+     await createAppointment(payload);
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
