@@ -14,6 +14,7 @@ export async function getAllDoctors (params = {}) {
         if(params.experience){
             query.append("minExperience", params.minExperience);
         }
+        console.log("base url: ",baseUrl);
         const res = await fetch(`${baseUrl}/api/doctors?${query.toString()}`,{
             cache: "no-store",
         });

@@ -5,6 +5,7 @@ import { getAllDoctors } from "@/app/lib/api/doctors";
 const FindDoctorsPage = async ({ searchParams }) => {
   const filters = await searchParams;
   const doctors = await getAllDoctors(filters);
+  console.log(doctors);
 
   return (
     <div className="container mx-auto px-4 py-8">
