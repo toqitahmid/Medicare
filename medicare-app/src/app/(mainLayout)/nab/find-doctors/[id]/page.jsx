@@ -1,10 +1,16 @@
 import { getDoctorById } from "@/app/lib/api/doctors";
+import { getPatientInfo } from "@/app/lib/api/patients";
+import { getUserSession } from "@/app/lib/core/session";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { toast, Zoom } from "react-toastify";
 
 const DoctorsDetailsPage = async ({ params }) => {
   const { id } = await params;
   const doctor = await getDoctorById(id);
+  const user = await getUserSession();
+
 
   if (!doctor) {
     return (
@@ -129,12 +135,18 @@ const DoctorsDetailsPage = async ({ params }) => {
 
       {/* Action CTA */}
       <div className="mt-8 text-center">
-        <Link
-          href={`${id}/bookAppointment`}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 rounded-xl transition duration-200 shadow-md"
-        >
-          Book Appointment
-        </Link>
+        {user?.role === "patient" ? (
+          <div>
+            <Link
+              href={`${id}/bookAppointment`}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-8 py-3 rounded-xl transition duration-200 shadow-md"
+            >
+              Book Appointment
+            </Link>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
     </main>
   );
