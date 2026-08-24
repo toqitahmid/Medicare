@@ -2,6 +2,8 @@ import { getDoctorById } from "@/app/lib/api/doctors";
 import { getPatientInfo } from "@/app/lib/api/patients";
 import { getUserSession } from "@/app/lib/core/session";
 import AppointmentForm from "./AppointmentForm";
+import { getAppointmentById } from "@/app/lib/api/appoinments";
+import { getPlanById } from "@/app/lib/api/plans";
 
 const page = async ({ params }) => {
   const user = await getUserSession();
@@ -9,6 +11,11 @@ const page = async ({ params }) => {
   const patient = await getPatientInfo(userId);
   const { id: doctorId } = await params;
   const doctor = await getDoctorById(doctorId);
+
+  const appointments = await getAppointmentById(patient?._id)
+  const patientPlan = await getPlanById(patient?.plan)
+  console.log('total appointment : ',appointments.length);
+  console.log('patient plan: ',patientPlan);
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8">

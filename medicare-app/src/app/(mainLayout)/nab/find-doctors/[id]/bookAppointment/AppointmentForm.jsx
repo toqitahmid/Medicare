@@ -1,8 +1,6 @@
 "use client";
 
 import { createAppointment } from "@/app/lib/actions/appointment";
-import { getAppointmentById } from "@/app/lib/api/appoinments";
-import { getPlanById } from "@/app/lib/api/plans";
 import { useState } from "react";
 import { toast, Zoom } from "react-toastify";
 
@@ -21,11 +19,6 @@ export default function AppointmentForm({ patient, doctor }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // const appointments = await getAppointmentById(patient?.id)
-    // const plan = await getPlanById(patient?.plan || 'N/A')
-    // console.log(appointments);
-    // console.log(plan);
-
     const payload = {
       patientId: patient._id,
       doctorId: doctor._id,
@@ -36,19 +29,19 @@ export default function AppointmentForm({ patient, doctor }) {
     };
 
     try {
-      if(patient.plan === "N/A"){
-        toast.success("You have to buy a plan!", {
-                  position: "top-center",
-                  autoClose: 2500,
-                  hideProgressBar: true,
-                  closeOnClick: false,
-                  pauseOnHover: false,
-                  draggable: true,
-                  theme: "dark",
-                  transition: Zoom,
-                });
-          return;
-      }
+      // if(patient.plan === "N/A"){
+      //   toast.error("You have to buy a plan!", {
+      //             position: "top-center",
+      //             autoClose: 2500,
+      //             hideProgressBar: true,
+      //             closeOnClick: false,
+      //             pauseOnHover: false,
+      //             draggable: true,
+      //             theme: "dark",
+      //             transition: Zoom,
+      //           });
+      //     return;
+      // }
      await createAppointment(payload);
     } catch (error) {
       console.error("Submission error:", error);
