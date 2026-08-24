@@ -145,7 +145,10 @@ const DoctorsDetailsPage = async ({ params }) => {
             </Link>
           </div>
         ) : (
-          <div></div>
+          <div>
+            <Link href={'/login'} className="text-xs underline">Book Appointment As 
+            Patient</Link>
+          </div>
         )}
       </div>
     </main>

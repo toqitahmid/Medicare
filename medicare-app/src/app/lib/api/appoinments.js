@@ -15,3 +15,15 @@ export async function getAllAppointments () {
     }
 }
 
+export async function getAppointmentById(patientId) {
+    try{
+        const res = await fetch(`${baseUrl}/api/appointments/${patientId}`);
+        if(!res.ok){
+            console.log(`Failed to fetch appointments ${res.status}`);
+        }
+        return res.json();
+    }
+    catch(err){
+        console.error("error: ", err);
+    }
+}

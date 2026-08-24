@@ -57,10 +57,6 @@ const page = async ({ params }) => {
                   <span className="font-semibold">Hours:</span>{" "}
                   {doctor.availableSlots}
                 </p>
-                <p>
-                  <span className="font-semibold">Fee:</span> $
-                  {doctor.consultationFee}
-                </p>
               </div>
             </div>
 
