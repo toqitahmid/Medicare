@@ -96,56 +96,6 @@ export default function AppointmentForm({ patient, doctor }) {
         />
       </div>
 
-      {/* Payment Selection */}
-      <div>
-        <label className="block text-sm font-medium mb-2">Payment Method</label>
-        <div className="grid grid-cols-2 gap-4">
-          <label
-            className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border p-4 text-center transition-all ${
-              formData.paymentStatus === "Pending"
-                ? "border-blue-600 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                : "border-slate-300 dark:border-slate-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="paymentStatus"
-              value="Pending"
-              checked={formData.paymentStatus === "Pending"}
-              onChange={() =>
-                setFormData({ ...formData, paymentStatus: "Pending" })
-              }
-              className="sr-only"
-            />
-            <span className="text-sm font-semibold">Pay at Clinic</span>
-            <span className="text-xs opacity-75">Status: Pending</span>
-          </label>
-
-          <label
-            className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border p-4 text-center transition-all ${
-              formData.paymentStatus === "Paid"
-                ? "border-blue-600 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                : "border-slate-300 dark:border-slate-700"
-            }`}
-          >
-            <input
-              type="radio"
-              name="paymentStatus"
-              value="Paid"
-              checked={formData.paymentStatus === "Paid"}
-              onChange={() =>
-                setFormData({ ...formData, paymentStatus: "Paid" })
-              }
-              className="sr-only"
-            />
-            <span className="text-sm font-semibold">Online Payment</span>
-            <span className="text-xs opacity-75">
-              Pay ${doctor.consultationFee} now
-            </span>
-          </label>
-        </div>
-      </div>
-
       {/* Submit Button */}
       <button
         type="submit"
@@ -154,7 +104,7 @@ export default function AppointmentForm({ patient, doctor }) {
       >
         {isSubmitting
           ? "Confirming..."
-          : `Confirm Appointment ($${doctor.consultationFee})`}
+          : `Confirm Appointment`}
       </button>
     </form>
   );
