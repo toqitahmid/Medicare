@@ -35,14 +35,14 @@ export default function MainNavbar() {
   };
 
   return (
-    <header className="w-full px-4 pt-4 relative z-50">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border border-divider px-6 shadow-lg backdrop-blur-md bg-background/80 text-foreground">
+    <header className="sticky top-0 z-50 w-full px-4 pt-4">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border border-divider/80 bg-background/85 px-5 text-foreground shadow-[0_12px_35px_rgba(18,59,66,0.12)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_16px_42px_rgba(18,59,66,0.16)] sm:px-6">
         {/* Brand / Logo */}
         <Link
           href="/"
           className="flex items-center gap-2 text-2xl font-black tracking-tight text-foreground hover:opacity-90 transition-opacity"
         >
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-lg text-primary-foreground">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary font-bold text-lg text-primary-foreground shadow-sm">
             +
           </div>
           <span>
@@ -95,7 +95,7 @@ export default function MainNavbar() {
               ) : (
                 <Link
                   href="/login"
-                  className="px-5 py-1.5 border rounded-2xl text-sm font-medium hover:bg-default-100 transition-colors"
+                  className="rounded-full border border-primary/30 px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                 >
                   Login
                 </Link>

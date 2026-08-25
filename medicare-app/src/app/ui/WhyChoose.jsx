@@ -34,7 +34,7 @@ const reasons = [
 
 const WhyChoose = () => {
   return (
-    <section className="px-4 py-12 sm:px-6 sm:py-16">
+    <section className="motion-reveal px-5 py-14 sm:px-10 sm:py-20">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-16">
         <div className="max-w-md">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -67,9 +67,9 @@ const WhyChoose = () => {
           {reasons.map(({ icon: Icon, title, description }) => (
             <article
               key={title}
-              className="border border-divider bg-default-50/60 p-6 transition-colors hover:border-primary/50 hover:bg-primary/5"
+              className="group rounded-xl border border-divider bg-default-50/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_14px_28px_rgba(18,59,66,0.08)]"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:rotate-6">
                 <Icon className="h-5 w-5" />
               </span>
               <h3 className="mt-5 text-lg font-semibold text-foreground">

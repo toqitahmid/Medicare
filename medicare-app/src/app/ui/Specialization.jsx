@@ -18,7 +18,7 @@ const specializations = [
 const Specialization = () => {
   return (
     <div>
-      <section className="border-y border-divider bg-default-50/60 px-4 py-12 sm:px-6 sm:py-16">
+      <section className="motion-reveal border-y border-divider px-5 py-14 sm:px-10 sm:py-20 dark:bg-default-50/20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
@@ -43,7 +43,7 @@ const Specialization = () => {
               <Link
                 key={name}
                 href={`/nab/find-doctors?specialization=${name}`}
-                className="group flex items-center justify-between border border-divider bg-background rounded-2xl p-5 transition-all hover:-translate-y-1 hover:border-primary hover:shadow-md"
+                className="group flex items-center justify-between rounded-xl border border-divider bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_14px_28px_rgba(18,59,66,0.1)]"
               >
                 <span className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center bg-primary/10 text-primary">
