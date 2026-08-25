@@ -1,11 +1,13 @@
 "use client";
 
 import { createAppointment } from "@/app/lib/actions/appointment";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, Zoom } from "react-toastify";
 
-export default function AppointmentForm({ patient, doctor }) {
+export default function AppointmentForm({appointments, patientPlan, patient, doctor }) {
   
+  const router = useRouter();
   const [formData, setFormData] = useState({
     appointmentDate: "",
     appointmentTime: "",
@@ -14,10 +16,12 @@ export default function AppointmentForm({ patient, doctor }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  
+  console.log("total appointments in form: ", appointments.length);
+  console.log("patient plan in form: ", patientPlan);
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     const payload = {
       patientId: patient._id,
@@ -28,20 +32,43 @@ export default function AppointmentForm({ patient, doctor }) {
       appointmentStatus: "Pending",
     };
 
+
+    if (patient.plan === "N/A") {
+      toast.error("You have to buy a plan!", {
+        position: "top-center",
+        autoClose: 2500,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+        transition: Zoom,
+      });
+       setTimeout(() => {
+         router.push("/plans");
+       }, 2500);
+      return;
+    }
+    if (appointments.length >= patientPlan.appointments) {
+      toast.error("You reached your limit!", {
+        position: "top-center",
+        autoClose: 2500,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+        transition: Zoom,
+      });
+       setTimeout(() => {
+         router.push("/plans");
+       }, 2500);
+      return;
+    }
+    setIsSubmitting(true);
+
     try {
-      // if(patient.plan === "N/A"){
-      //   toast.error("You have to buy a plan!", {
-      //             position: "top-center",
-      //             autoClose: 2500,
-      //             hideProgressBar: true,
-      //             closeOnClick: false,
-      //             pauseOnHover: false,
-      //             draggable: true,
-      //             theme: "dark",
-      //             transition: Zoom,
-      //           });
-      //     return;
-      // }
+      
      await createAppointment(payload);
     } catch (error) {
       console.error("Submission error:", error);

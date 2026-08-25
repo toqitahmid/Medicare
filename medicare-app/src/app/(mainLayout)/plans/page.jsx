@@ -144,6 +144,7 @@ export default function PricingPage() {
 
             {/* Action Button */}
             <form action="/api/checkout_sessions" method="POST">
+            <input type="hidden" name="planId" value={plan.id}></input>
               <section>
                 <button
                   onClick={() => setSelectedPlan(plan.id)}
@@ -159,16 +160,6 @@ export default function PricingPage() {
                 </button>
               </section>
             </form>
-            {/* <button
-              onClick={() => setSelectedPlan(plan.id)}
-              className={`mt-8 w-full py-3 rounded-xl font-semibold text-sm transition-opacity ${
-                plan.isPopular
-                  ? "bg-teal-600 hover:opacity-90 text-white"
-                  : "bg-[var(--text-main)] text-[var(--bg-main)] hover:opacity-90"
-              }`}
-            >
-              Book {plan.appointments} for ${plan.price}
-            </button> */}
           </div>
         ))}
       </div>

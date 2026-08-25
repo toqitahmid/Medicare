@@ -14,8 +14,10 @@ const page = async ({ params }) => {
 
   const appointments = await getAppointmentById(patient?._id)
   const patientPlan = await getPlanById(patient?.plan)
-  console.log('total appointment : ',appointments.length);
-  console.log('patient plan: ',patientPlan);
+  console.log('patient plan: ',patient?.plan);
+  console.log('total appointments: ', appointments.length);
+  console.log('patient plan: ', patientPlan);
+
 
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8">
@@ -73,11 +75,11 @@ const page = async ({ params }) => {
                 Patient Info
               </h2>
               <div className="mt-4 flex items-center space-x-3">
-                <img
+                {/* <img
                   src={patient.photo}
                   alt={user.name}
                   className="h-12 w-12 rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                />
+                /> */}
                 <div>
                   <h3 className="text-sm font-semibold">{user.name}</h3>
                   <p className="text-xs opacity-75">{user.email}</p>
@@ -92,7 +94,7 @@ const page = async ({ params }) => {
             <h2 className="text-lg font-semibold mb-6 border-b border-slate-200 dark:border-slate-800 pb-3">
               Schedule Details
             </h2>
-            <AppointmentForm patient={patient} doctor={doctor} />
+            <AppointmentForm appointments = {appointments} patientPlan = {patientPlan} patient={patient} doctor={doctor} />
           </div>
         </div>
       </div>
