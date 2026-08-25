@@ -1,6 +1,8 @@
+import { createPaymentInfo } from "@/app/lib/actions/payment";
+import { stripe } from "@/app/lib/stripe";
+import { email } from "better-auth";
 import { redirect } from "next/navigation";
 
-import { stripe } from "../../lib/stripe";
 
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
@@ -11,6 +13,7 @@ export default async function Success({ searchParams }) {
   const {
     status,
     customer_details: { email: customerEmail },
+    metadata,
   } = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ["line_items", "payment_intent"],
   });
@@ -20,6 +23,13 @@ export default async function Success({ searchParams }) {
   }
 
   if (status === "complete") {
+    const paymentInfo = {
+      email:customerEmail,
+      planId: metadata.planId,
+      patientId: metadata.patientId,
+    }
+    const result = await createPaymentInfo(paymentInfo);
+    console.log(result);
     return (
       <section id="success">
         <p>
