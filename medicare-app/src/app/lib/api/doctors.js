@@ -47,3 +47,21 @@ export async function getDoctorById(doctorId) {
         return null;
     }
 }
+
+export async function getDoctorByUserId(userId) {
+    try{
+        const res = await fetch(`${baseUrl}/api/doctors/user/${userId}`,{
+            cache: "no-store"
+        });
+
+        if(!res.ok){
+            console.error(`failed to fetch patients ${res.status}`);
+            return null;
+        }
+        return res.json();
+    }
+    catch(err){
+        console.error(err);
+    }
+}
+
