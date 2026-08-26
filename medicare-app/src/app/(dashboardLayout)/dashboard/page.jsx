@@ -21,6 +21,7 @@ import PrescriptionManagement from "@/app/ui/dashboard/doctor/PrescriptionManage
 import DoctorOverview from "@/app/ui/dashboard/doctor/DoctorOverview";
 import { getDoctorByUserId } from "@/app/lib/api/doctors";
 import { getPrescriptionsByDoctorId } from "@/app/lib/api/prescriptions";
+import { getReviewsByPatientId } from "@/app/lib/api/reviews";
 
 const tabTitles = Object.fromEntries(
   Object.values(ROLE_SIDEBAR_ITEMS)
@@ -40,6 +41,8 @@ export default function DashboardPage() {
   const [doctorTodayAppointments, setDoctorTodayAppointments] = useState([]);
   const [payments, setPayments] = useState([]);
   const [DoctorData, setDoctorData] = useState(null);
+  const [PatientData, setPatientData] = useState(null);
+  const [patientReviews, setPatientReviews] = useState([]);
   const [doctorPrescriptions, setDoctorPrescription] = useState([]);
 
   const role = selectedRole || sessionRole || "patient";
@@ -53,17 +56,20 @@ export default function DashboardPage() {
     async function loadPatientData() {
       try{
         const user = await getUserSession();
-        const patient = await getPatientByUserId(user.id);
+        const patientData = await getPatientByUserId(user.id);
 
-        const [totalAppointments, totalPayments] = await Promise.all([
-          getAppointmentById(patient?._id),
-          getPaymentByPatientId(patient?._id),
+        const [totalAppointments, totalPayments, totalReviews] = await Promise.all([
+          getAppointmentById(patientData?._id),
+          getPaymentByPatientId(patientData?._id),
+          getReviewsByPatientId(patientData?._id),
         ])
         if(cancelled){
           return;
         }
         setAppointments(totalAppointments);
-        setPayments(totalPayments)
+        setPayments(totalPayments);
+        setPatientData(patientData);
+        setPatientReviews(totalReviews);
       }
       catch(err){
         console.error(err);
@@ -157,7 +163,7 @@ export default function DashboardPage() {
         case "payment-history":
           return <PaymentHistory payments={payments} />;
         case "my-reviews":
-          return <MyReviews />;
+          return <MyReviews patientReviews={patientReviews}/>;
         default:
           return (
             <PatientOverview

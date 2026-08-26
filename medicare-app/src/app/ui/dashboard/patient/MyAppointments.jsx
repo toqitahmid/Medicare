@@ -18,8 +18,12 @@ import {
   GraduationCap,
   Stethoscope,
   Activity,
+  Star,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@heroui/react";
+import { toast, Zoom } from "react-toastify";
 
 // Helper function to format ISO date strings into readable text
 const formatDate = (dateString) => {
@@ -34,9 +38,78 @@ const formatDate = (dateString) => {
 };
 
 export default function MyAppointments({ appointments = [] }) {
+  const appointmentList = appointments.length > 0 ? appointments : [];
 
-  const appointmentList =
-    appointments.length > 0 ? appointments : [];
+  // Modal and Form States
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [rating, setRating] = useState(5);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const openReviewModal = (appointment) => {
+    setSelectedAppointment(appointment);
+    setRating(5);
+    setReviewText("");
+  };
+
+  const closeReviewModal = () => {
+    setSelectedAppointment(null);
+    setRating(5);
+    setHoverRating(0);
+    setReviewText("");
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!selectedAppointment) return;
+
+    setIsSubmitting(true);
+
+    // Payload containing required appointment and review details
+    const payload = {
+      appointmentId: selectedAppointment.id || selectedAppointment._id,
+      patientId: selectedAppointment.patientId,
+      patientName: selectedAppointment.patientName || "Anonymous Patient",
+      doctorId: selectedAppointment.doctorId,
+      doctorName: selectedAppointment.doctorName,
+      rating: Number(rating),
+      reviewText: reviewText,
+    };
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    try {
+      const response = await fetch(`${baseUrl}/api/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit review.");
+      }
+
+      toast.success("Review submitted successfully!", {
+        position: "top-center",
+        autoClose: 2500,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+        transition: Zoom,
+      });
+
+      closeReviewModal();
+    } catch (error) {
+      toast.error(error.message || "Failed to submit review. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -170,6 +243,16 @@ export default function MyAppointments({ appointments = [] }) {
                         </p>
                       </div>
                     </div>
+                    <div className="flex flex-row-reverse w-full sm:w-auto">
+                      {status.toLowerCase() === "accepted" && (
+                        <Button
+                          onClick={() => openReviewModal(nextAppointment)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl transition-all"
+                        >
+                          Give Review
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   /* Empty State */
@@ -199,6 +282,96 @@ export default function MyAppointments({ appointments = [] }) {
           );
         })}
       </div>
+
+      {/* Review Modal */}
+      {selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Leave a Review
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Share your feedback for Dr. {selectedAppointment.doctorName}
+                </p>
+              </div>
+              <button
+                onClick={closeReviewModal}
+                className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitReview} className="space-y-4">
+              {/* Star Rating Input */}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Rating
+                </label>
+                <div className="flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="p-1 focus:outline-hidden transition-transform hover:scale-110"
+                    >
+                      <Star
+                        size={28}
+                        className={`${
+                          star <= (hoverRating || rating)
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-slate-300 dark:text-slate-700"
+                        } transition-colors`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-sm font-bold text-amber-500">
+                    {hoverRating || rating} / 5
+                  </span>
+                </div>
+              </div>
+
+              {/* Text Review Input */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Your Feedback
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Tell us about your consultation experience..."
+                  className="w-full p-3 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400"
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  type="button"
+                  onClick={closeReviewModal}
+                  className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-4 py-2 rounded-xl transition-colors"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-5 py-2 rounded-xl transition-all shadow-md disabled:opacity-50"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Review"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
