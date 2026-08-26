@@ -11,7 +11,7 @@ import PaymentHistory from "@/app/ui/dashboard/patient/PaymentHistory";
 import MyReviews from "@/app/ui/dashboard/patient/MyReviews";
 import AdminDashboard from "@/app/ui/dashboard/admin/AdminDashboard";
 import { authClient } from "@/app/lib/auth-client";
-import { getAppointmentById } from "@/app/lib/api/appoinments";
+import { getAppointmentByDoctorId, getAppointmentById, getTodayAppointmentByDoctorId } from "@/app/lib/api/appoinments";
 import { getUserSession } from "@/app/lib/core/session";
 import { getPatientByUserId } from "@/app/lib/api/patients";
 import { getPaymentByPatientId } from "@/app/lib/api/payments";
@@ -19,6 +19,8 @@ import ManageSchedule from "@/app/ui/dashboard/doctor/ManageSchedule";
 import AppointmentRequest from "@/app/ui/dashboard/doctor/AppointmentRequest";
 import PrescriptionManagement from "@/app/ui/dashboard/doctor/PrescriptionManagement";
 import DoctorOverview from "@/app/ui/dashboard/doctor/DoctorOverview";
+import { getDoctorByUserId } from "@/app/lib/api/doctors";
+import { getPrescriptionsByDoctorId } from "@/app/lib/api/prescriptions";
 
 const tabTitles = Object.fromEntries(
   Object.values(ROLE_SIDEBAR_ITEMS)
@@ -34,7 +36,11 @@ export default function DashboardPage() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [appointments, setAppointments] = useState([]);
+  const [doctorAppointments, setDoctorAppointments] = useState([]);
+  const [doctorTodayAppointments, setDoctorTodayAppointments] = useState([]);
   const [payments, setPayments] = useState([]);
+  const [DoctorData, setDoctorData] = useState(null);
+  const [doctorPrescriptions, setDoctorPrescription] = useState([]);
 
   const role = selectedRole || sessionRole || "patient";
   const setRole = setSelectedRole;
@@ -71,7 +77,39 @@ export default function DashboardPage() {
   }, []);
 
 
- 
+  // --------- doctor useEffect ----------- //
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDoctorData() {
+      try {
+        const user = await getUserSession();
+        const doctorData = await getDoctorByUserId(user.id);
+
+        const [totalAppointments, todayAppoitnments, totalPrescriptions] = await Promise.all([
+          getAppointmentByDoctorId(doctorData?._id),
+          getTodayAppointmentByDoctorId(doctorData?._id),
+          getPrescriptionsByDoctorId(doctorData?._id),
+        ]);
+
+        if (cancelled) return;
+
+        setDoctorData(doctorData);
+        setDoctorAppointments(totalAppointments);
+        setDoctorTodayAppointments(todayAppoitnments);
+        setDoctorPrescription(totalPrescriptions);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    
+    
+    loadDoctorData();
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
 
   const visibleTab = ROLE_SIDEBAR_ITEMS[role].some(
     (item) => item.id === activeTab,
@@ -83,13 +121,28 @@ export default function DashboardPage() {
     if (role === "doctor") {
       switch(visibleTab){
         case "manage-schedule":
-          return <ManageSchedule></ManageSchedule>;
+          return <ManageSchedule DoctorData={DoctorData}></ManageSchedule>;
         case "appointment-requests":
-          return <AppointmentRequest></AppointmentRequest>
+          return (
+            <AppointmentRequest
+              doctorAppointments={doctorAppointments}
+            ></AppointmentRequest>
+          );
         case "prescription-management":
-          return <PrescriptionManagement></PrescriptionManagement>
+          return (
+            <PrescriptionManagement
+              doctorAppointments={doctorAppointments}
+            ></PrescriptionManagement>
+          );
         default:
-          return <DoctorOverview activeTab={activeTab}></DoctorOverview>
+          return (
+            <DoctorOverview
+              doctorPrescriptions={doctorPrescriptions}
+              doctorAppointments={doctorAppointments}
+              doctorTodayAppointments={doctorTodayAppointments}
+              activeTab={activeTab}
+            ></DoctorOverview>
+          );
       }
     }
 
