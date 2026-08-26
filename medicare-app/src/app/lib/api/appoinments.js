@@ -36,3 +36,17 @@ export async function getAppointmentByDoctorId(doctorId) {
     console.error("error: ", err);
   }
 }
+
+export async function getTodayAppointmentByDoctorId(doctorId) {
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/doctors/appointments/today/${doctorId}`,
+    );
+    if (!res.ok) {
+      console.log(`Failed to fetch appointments ${res.status}`);
+    }
+    return res.json();
+  } catch (err) {
+    console.error("error: ", err);
+  }
+}
