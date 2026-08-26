@@ -9,13 +9,16 @@ import PatientOverview from "@/app/ui/dashboard/patient/PatientOverview";
 import MyAppointments from "@/app/ui/dashboard/patient/MyAppointments";
 import PaymentHistory from "@/app/ui/dashboard/patient/PaymentHistory";
 import MyReviews from "@/app/ui/dashboard/patient/MyReviews";
-import DoctorDashboard from "@/app/ui/dashboard/doctor/DoctorDashboard";
 import AdminDashboard from "@/app/ui/dashboard/admin/AdminDashboard";
 import { authClient } from "@/app/lib/auth-client";
 import { getAppointmentById } from "@/app/lib/api/appoinments";
 import { getUserSession } from "@/app/lib/core/session";
 import { getPatientByUserId } from "@/app/lib/api/patients";
 import { getPaymentByPatientId } from "@/app/lib/api/payments";
+import ManageSchedule from "@/app/ui/dashboard/doctor/ManageSchedule";
+import AppointmentRequest from "@/app/ui/dashboard/doctor/AppointmentRequest";
+import PrescriptionManagement from "@/app/ui/dashboard/doctor/PrescriptionManagement";
+import DoctorOverview from "@/app/ui/dashboard/doctor/DoctorOverview";
 
 const tabTitles = Object.fromEntries(
   Object.values(ROLE_SIDEBAR_ITEMS)
@@ -36,47 +39,39 @@ export default function DashboardPage() {
   const role = selectedRole || sessionRole || "patient";
   const setRole = setSelectedRole;
 
+
+  // --------- patient useEffect ---------- //
   useEffect(() => {
     let cancelled = false;
 
-    async function loadAppointments() {
-      try {
+    async function loadPatientData() {
+      try{
         const user = await getUserSession();
         const patient = await getPatientByUserId(user.id);
-        const totalAppointments = await getAppointmentById(patient?._id);
+
+        const [totalAppointments, totalPayments] = await Promise.all([
+          getAppointmentById(patient?._id),
+          getPaymentByPatientId(patient?._id),
+        ])
+        if(cancelled){
+          return;
+        }
         setAppointments(totalAppointments);
-      } catch {
-        // Patient components keep their local preview data when the API is unavailable.
+        setPayments(totalPayments)
+      }
+      catch(err){
+        console.error(err);
       }
     }
 
-    loadAppointments();
-    return () => {
-      cancelled = true;
-    };
+     loadPatientData();
+     return () => {
+       cancelled = false;
+     };
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
 
-    async function loadPayments() {
-      try {
-        const user = await getUserSession();
-        const patient = await getPatientByUserId(user.id);
-        const totalPayments = await getPaymentByPatientId(patient._id);
-        setPayments(totalPayments);
-        console.log("total payments",totalPayments);
-        
-      } catch {
-        // Patient components keep their local preview data when the API is unavailable.
-      }
-    }
-
-    loadPayments();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+ 
 
   const visibleTab = ROLE_SIDEBAR_ITEMS[role].some(
     (item) => item.id === activeTab,
@@ -86,28 +81,39 @@ export default function DashboardPage() {
 
   const renderContent = () => {
     if (role === "doctor") {
-      return <DoctorDashboard activeTab={visibleTab} />;
+      switch(visibleTab){
+        case "manage-schedule":
+          return <ManageSchedule></ManageSchedule>;
+        case "appointment-requests":
+          return <AppointmentRequest></AppointmentRequest>
+        case "prescription-management":
+          return <PrescriptionManagement></PrescriptionManagement>
+        default:
+          return <DoctorOverview activeTab={activeTab}></DoctorOverview>
+      }
     }
 
     if (role === "admin") {
       return <AdminDashboard activeTab={visibleTab} />;
     }
 
-    switch (visibleTab) {
-      case "my-appointments":
-        return <MyAppointments appointments={appointments} />;
-      case "payment-history":
-        return <PaymentHistory payments={payments} />;
-      case "my-reviews":
-        return <MyReviews />;
-      default:
-        return (
-          <PatientOverview
-            payments={payments}
-            appointments={appointments}
-            onNavigateTab={setActiveTab}
-          />
-        );
+    if(role === "patient"){
+      switch (visibleTab) {
+        case "my-appointments":
+          return <MyAppointments appointments={appointments} />;
+        case "payment-history":
+          return <PaymentHistory payments={payments} />;
+        case "my-reviews":
+          return <MyReviews />;
+        default:
+          return (
+            <PatientOverview
+              payments={payments}
+              appointments={appointments}
+              onNavigateTab={setActiveTab}
+            />
+          );
+      }
     }
   };
 
