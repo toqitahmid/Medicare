@@ -87,9 +87,21 @@ export const ROLE_SIDEBAR_ITEMS = {
     },
     {
       id: "manage-users",
-      label: "Manage Users & Doctors",
+      label: "Manage Users",
       icon: Users,
       badge: "5 Pending",
+    },
+    {
+      id: "manage-patients",
+      label: "Manage Patients",
+      icon: Users,
+      badge: "3 Pending",
+    },
+    {
+      id: "manage-doctors",
+      label: "Manage Doctors",
+      icon: Users,
+      badge: "2 Pending",
     },
     {
       id: "all-appointments",
