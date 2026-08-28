@@ -22,7 +22,7 @@ import { getDoctorByUserId } from "@/app/lib/api/doctors";
 import { getPrescriptionsByDoctorId } from "@/app/lib/api/prescriptions";
 import { getReviewsByPatientId } from "@/app/lib/api/reviews";
 import AdminOverview from "@/app/ui/dashboard/admin/AdminOverview";
-import ManageUsers from "@/app/ui/dashboard/admin/ManageUsers";
+
 import ManagePatients from "@/app/ui/dashboard/admin/ManagePatients";
 import ManageDoctors from "@/app/ui/dashboard/admin/ManageDoctors";
 import { getAdminAppointments, getAdminData, getAdminDoctors, getAdminPatients, getAdminReviews, getAdminUsers } from "@/app/lib/api/admin";
@@ -221,10 +221,10 @@ export default function DashboardPage() {
 
     if (role === "admin") {
       switch (visibleTab) {
-        case "manage-users":
-          return <ManageUsers></ManageUsers>;
         case "manage-patients":
-          return <ManagePatients></ManagePatients>;
+          return (
+            <ManagePatients adminPatients={adminPatients}></ManagePatients>
+          );
         case "manage-doctors":
           return <ManageDoctors></ManageDoctors>;
         case "all-appointments":
