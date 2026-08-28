@@ -86,12 +86,6 @@ export const ROLE_SIDEBAR_ITEMS = {
       badge: null,
     },
     {
-      id: "manage-users",
-      label: "Manage Users",
-      icon: Users,
-      badge: "5 Pending",
-    },
-    {
       id: "manage-patients",
       label: "Manage Patients",
       icon: Users,
@@ -107,12 +101,6 @@ export const ROLE_SIDEBAR_ITEMS = {
       id: "all-appointments",
       label: "All Appointments",
       icon: CalendarCheck,
-      badge: null,
-    },
-    {
-      id: "system-settings",
-      label: "System Settings",
-      icon: Settings,
       badge: null,
     },
   ],
