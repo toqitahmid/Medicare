@@ -9,10 +9,9 @@ import PatientOverview from "@/app/ui/dashboard/patient/PatientOverview";
 import MyAppointments from "@/app/ui/dashboard/patient/MyAppointments";
 import PaymentHistory from "@/app/ui/dashboard/patient/PaymentHistory";
 import MyReviews from "@/app/ui/dashboard/patient/MyReviews";
-import AdminDashboard from "@/app/ui/dashboard/admin/AdminDashboard";
 import { authClient } from "@/app/lib/auth-client";
 import { getAppointmentByDoctorId, getAppointmentById, getTodayAppointmentByDoctorId } from "@/app/lib/api/appoinments";
-import { getUserSession } from "@/app/lib/core/session";
+import { getUserSession, requiredRole } from "@/app/lib/core/session";
 import { getPatientByUserId } from "@/app/lib/api/patients";
 import { getPaymentByPatientId } from "@/app/lib/api/payments";
 import ManageSchedule from "@/app/ui/dashboard/doctor/ManageSchedule";
@@ -22,6 +21,12 @@ import DoctorOverview from "@/app/ui/dashboard/doctor/DoctorOverview";
 import { getDoctorByUserId } from "@/app/lib/api/doctors";
 import { getPrescriptionsByDoctorId } from "@/app/lib/api/prescriptions";
 import { getReviewsByPatientId } from "@/app/lib/api/reviews";
+import AdminOverview from "@/app/ui/dashboard/admin/AdminOverview";
+import ManageUsers from "@/app/ui/dashboard/admin/ManageUsers";
+import ManagePatients from "@/app/ui/dashboard/admin/ManagePatients";
+import ManageDoctors from "@/app/ui/dashboard/admin/ManageDoctors";
+import { getAdminAppointments, getAdminData, getAdminDoctors, getAdminPatients, getAdminReviews, getAdminUsers } from "@/app/lib/api/admin";
+import ManageAppointments from "@/app/ui/dashboard/admin/ManageAppointments";
 
 const tabTitles = Object.fromEntries(
   Object.values(ROLE_SIDEBAR_ITEMS)
@@ -42,19 +47,30 @@ export default function DashboardPage() {
   const [payments, setPayments] = useState([]);
   const [DoctorData, setDoctorData] = useState(null);
   const [PatientData, setPatientData] = useState(null);
+  const [AdminData, setAdmintData] = useState(null);
   const [patientReviews, setPatientReviews] = useState([]);
   const [doctorPrescriptions, setDoctorPrescription] = useState([]);
 
-  const role = selectedRole || sessionRole || "patient";
-  const setRole = setSelectedRole;
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [adminPatients, setAdminPatients] = useState([]);
+  const [adminDoctors, setAdminDoctors] = useState([]);
+  const [adminAppointments, setAdminAppointments] = useState([]);
+  const [adminReviews, setAdminReviews] = useState([]);
+
+   const role = isPending ? null : selectedRole || sessionRole || "patient";
+   const setRole = setSelectedRole;
 
 
   // --------- patient useEffect ---------- //
   useEffect(() => {
+      if (isPending || role !== "patient") {
+        return;
+      }
     let cancelled = false;
 
     async function loadPatientData() {
-      try{
+      await requiredRole("patient");
+      try {
         const user = await getUserSession();
         const patientData = await getPatientByUserId(user.id);
 
@@ -63,7 +79,7 @@ export default function DashboardPage() {
           getPaymentByPatientId(patientData?._id),
           getReviewsByPatientId(patientData?._id),
         ])
-        if(cancelled){
+        if (cancelled) {
           return;
         }
         setAppointments(totalAppointments);
@@ -71,23 +87,27 @@ export default function DashboardPage() {
         setPatientData(patientData);
         setPatientReviews(totalReviews);
       }
-      catch(err){
+      catch (err) {
         console.error(err);
       }
     }
 
-     loadPatientData();
-     return () => {
-       cancelled = false;
-     };
-  }, []);
+    loadPatientData();
+    return () => {
+      cancelled = true;
+    };
+  }, [role, isPending]);
 
 
   // --------- doctor useEffect ----------- //
   useEffect(() => {
+     if (isPending || role !== "doctor") {
+       return;
+     }
     let cancelled = false;
 
     async function loadDoctorData() {
+      await requiredRole("doctor");
       try {
         const user = await getUserSession();
         const doctorData = await getDoctorByUserId(user.id);
@@ -108,14 +128,61 @@ export default function DashboardPage() {
         console.error(err);
       }
     }
-    
-    
+
+
     loadDoctorData();
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [role, isPending])
 
+
+  // ---------- admin useEffect ----------- //
+  useEffect(() => {
+    if (isPending || role !== "admin") {
+      return;
+    }
+    let cancelled = false;
+
+    async function loadAdminData() {
+      await requiredRole("admin");
+      try{
+
+        const user = await getUserSession();
+        const adminData = await getAdminData(user?.id);
+
+        const[totalUsers, totalDoctors, totalPatients, totalAppointments, totalReviews] = await Promise.all([
+          getAdminUsers(),
+          getAdminDoctors(),
+          getAdminPatients(),
+          getAdminAppointments(),
+          getAdminReviews(),
+        ])
+
+        if(cancelled){
+          return;
+        }
+        setAdmintData(adminData);
+        setAdminUsers(totalUsers);
+        setAdminDoctors(totalDoctors);
+        setAdminPatients(totalPatients);
+        setAdminAppointments(totalAppointments);
+        setAdminReviews(totalReviews);
+      }
+      catch(err){
+        console.error(err);
+      }
+    }
+    
+    loadAdminData();
+    return () => {
+      cancelled = true;
+    }
+  }, [role, isPending])
+
+  if (isPending) {
+    return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" />;
+  }
 
   const visibleTab = ROLE_SIDEBAR_ITEMS[role].some(
     (item) => item.id === activeTab,
@@ -125,7 +192,7 @@ export default function DashboardPage() {
 
   const renderContent = () => {
     if (role === "doctor") {
-      switch(visibleTab){
+      switch (visibleTab) {
         case "manage-schedule":
           return <ManageSchedule DoctorData={DoctorData}></ManageSchedule>;
         case "appointment-requests":
@@ -153,17 +220,38 @@ export default function DashboardPage() {
     }
 
     if (role === "admin") {
-      return <AdminDashboard activeTab={visibleTab} />;
+      switch (visibleTab) {
+        case "manage-users":
+          return <ManageUsers></ManageUsers>;
+        case "manage-patients":
+          return <ManagePatients></ManagePatients>;
+        case "manage-doctors":
+          return <ManageDoctors></ManageDoctors>;
+        case "all-appointments":
+          return <ManageAppointments></ManageAppointments>;
+        default:
+          return (
+            <AdminOverview
+              AdminData={AdminData}
+              adminUsers={adminUsers}
+              adminPatients={adminPatients}
+              adminDoctors={adminDoctors}
+              adminAppointments={adminAppointments}
+              adminReviews={adminReviews}
+              activeTab={activeTab}
+            ></AdminOverview>
+          );
+      }
     }
 
-    if(role === "patient"){
+    if (role === "patient") {
       switch (visibleTab) {
         case "my-appointments":
           return <MyAppointments appointments={appointments} />;
         case "payment-history":
           return <PaymentHistory payments={payments} />;
         case "my-reviews":
-          return <MyReviews patientReviews={patientReviews}/>;
+          return <MyReviews patientReviews={patientReviews} />;
         default:
           return (
             <PatientOverview
@@ -176,9 +264,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (isPending) {
-    return <div className="min-h-screen bg-slate-50 dark:bg-slate-950" />;
-  }
+  
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white">
