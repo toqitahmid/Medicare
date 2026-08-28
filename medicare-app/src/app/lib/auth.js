@@ -13,8 +13,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: { type: "string", required: true },
-      photo: {type: "string", required: false},
-      plan: {type: "string", required: false, defaultValue: "N/A"}
+      
     },
   },
   databaseHooks: {
@@ -37,7 +36,7 @@ export const auth = betterAuth({
                 profileImage: body.profileImage,
                 availableDays: body.availableDays,
                 availableSlots: body.availableSlots,
-                verificationStatus: "Pending",
+                verificationStatus: "pending",
                 createdAt: new Date(),
               });
             } else {
@@ -49,6 +48,7 @@ export const auth = betterAuth({
                 gender: body.gender,
                 photo: body.photo,
                 plan: 'N/A',
+                verificationStatus: "pending",
                 createdAt: new Date(),
               });
             }

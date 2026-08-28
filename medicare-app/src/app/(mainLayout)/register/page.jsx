@@ -103,8 +103,6 @@ export default function RegisterPage() {
         password: formData.password,
         name: formData.role === "doctor" ? formData.doctorName : formData.name,
         role: formData.role,
-        photo: formData.photo,
-        plan: "N/A",
         ...(formData.role === "patient"
           ? {
               role: 'patient',
