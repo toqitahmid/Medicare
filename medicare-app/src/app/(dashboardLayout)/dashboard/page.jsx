@@ -226,7 +226,7 @@ export default function DashboardPage() {
             <ManagePatients adminPatients={adminPatients}></ManagePatients>
           );
         case "manage-doctors":
-          return <ManageDoctors></ManageDoctors>;
+          return <ManageDoctors adminDoctors={adminDoctors}></ManageDoctors>;
         case "all-appointments":
           return <ManageAppointments></ManageAppointments>;
         default:
