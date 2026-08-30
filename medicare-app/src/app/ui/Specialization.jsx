@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   Activity,
   ArrowRight,
@@ -39,22 +42,29 @@ const Specialization = () => {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {specializations.map(({ icon: Icon, name }) => (
-              <Link
+            {specializations.map(({ icon: Icon, name }, index) => (
+              <motion.div
                 key={name}
-                href={`/nab/find-doctors?specialization=${name}`}
-                className="group flex items-center justify-between rounded-xl border border-divider bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_14px_28px_rgba(18,59,66,0.1)]"
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.4, delay: index * 0.06 }}
               >
-                <span className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center bg-primary/10 text-primary">
-                    <Icon className="h-5 w-5" />
+                <Link
+                  href={`/nab/find-doctors?specialization=${name}`}
+                  className="group flex items-center justify-between rounded-xl border border-divider bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_14px_28px_rgba(18,59,66,0.1)]"
+                >
+                  <span className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <span className="text-sm font-semibold text-foreground">
+                      {name}
+                    </span>
                   </span>
-                  <span className="text-sm font-semibold text-foreground">
-                    {name}
-                  </span>
-                </span>
-                <ArrowRight className="h-4 w-4 text-default-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-              </Link>
+                  <ArrowRight className="h-4 w-4 text-default-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>

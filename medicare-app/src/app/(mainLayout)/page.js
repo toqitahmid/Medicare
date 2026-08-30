@@ -2,13 +2,12 @@ import Banner from "../ui/Banner";
 import Specialization from "../ui/Specialization";
 import WhyChoose from "../ui/WhyChoose";
 
-
 export default function Home() {
   return (
-    <div className="lg:space-y-40 md:space-y-40 space-y-25">
-      <Banner></Banner>
-      <Specialization></Specialization>
-      <WhyChoose></WhyChoose>
+    <div className="mx-auto max-w-[1600px] space-y-12 pb-14 sm:space-y-16 lg:space-y-20">
+      <Banner />
+      <Specialization />
+      <WhyChoose />
     </div>
   );
 }

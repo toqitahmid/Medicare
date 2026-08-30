@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   Activity,
   ArrowRight,
@@ -19,20 +22,25 @@ const trustPoints = [
 
 const Banner = () => {
   return (
-    <div className="mt-5 overflow-hidden sm:mt-8">
-      <section className="relative min-h-[min(76vh,720px)] overflow-hidden bg-[#123b42] text-white">
+    <div className="-mt-20 w-full overflow-hidden pt-0">
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className="relative rounded-2xl mt-4 min-h-[min(82vh,820px)] w-full overflow-hidden bg-[#123b42] text-white shadow-[0_24px_70px_rgba(12,34,40,0.18)]"
+      >
         <Image
           src="/assets/banner.jpg"
           alt="Medical team working together in an operating room"
           fill
           priority
-          className="absolute inset-0 h-full w-full object-cover object-center opacity-65"
+          sizes="100vw"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-70 rounded-2xl"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,39,45,0.92)_0%,rgba(6,39,45,0.62)_48%,rgba(6,39,45,0.26)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#06272d]/55 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,39,45,0.94)_0%,rgba(6,39,45,0.78)_38%,rgba(6,39,45,0.26)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#06272d]/70 to-transparent" />
 
-        {/* Content container remains constrained to match the rest of your site layout */}
-        <div className="relative mx-auto flex min-h-[min(76vh,720px)] max-w-7xl flex-col justify-end px-5 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-24">
+        <div className="relative mx-auto flex min-h-[min(82vh,820px)] w-full max-w-none flex-col justify-end px-5 pb-12 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 lg:pt-32">
           <p className="motion-reveal mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">
             <span className="h-px w-10 bg-cyan-200" />
             Your health, our purpose
@@ -60,9 +68,15 @@ const Banner = () => {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      <section className="motion-reveal mx-auto flex max-w-7xl flex-col gap-5 px-5 py-12 sm:px-10 sm:py-14 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="motion-reveal mx-auto mt-8 flex max-w-7xl flex-col gap-5 px-5 py-10 sm:px-10 sm:py-12 lg:flex-row lg:items-center lg:justify-between lg:gap-10 lg:py-14"
+      >
         <div className="max-w-sm">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             A better way to care
@@ -72,17 +86,21 @@ const Banner = () => {
           </h2>
         </div>
         <div className="grid flex-1 gap-3 sm:grid-cols-3">
-          {trustPoints.map(({ icon: Icon, label }) => (
-            <div
+          {trustPoints.map(({ icon: Icon, label }, index) => (
+            <motion.div
               key={label}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
               className="flex items-center gap-3 border-t border-divider pt-4 text-sm font-medium text-default-600 transition-colors hover:text-primary"
             >
               <Icon className="h-5 w-5 shrink-0 text-primary" />
               {label}
-            </div>
+            </motion.div>
           ))}
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 };

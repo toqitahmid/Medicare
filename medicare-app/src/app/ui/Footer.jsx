@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 
@@ -17,7 +20,13 @@ const socialLinks = [
 
 const MainFooter = () => {
   return (
-    <footer className="mt-auto bg-[#103b42] text-white">
+    <motion.footer
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="mt-auto bg-[#103b42] text-white"
+    >
       <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.3fr_0.8fr_1fr_1fr]">
           <div className="max-w-sm">
@@ -123,7 +132,7 @@ const MainFooter = () => {
           <p>Care that moves with you.</p>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

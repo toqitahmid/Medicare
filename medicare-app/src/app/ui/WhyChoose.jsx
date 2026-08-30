@@ -1,6 +1,9 @@
+"use client";
+
+import { motion } from "framer-motion";
 import {
   CalendarCheck,
-  ClipboardPlus, // Updated import name
+  ClipboardPlus,
   Headphones,
   ShieldCheck,
 } from "lucide-react";
@@ -64,9 +67,13 @@ const WhyChoose = () => {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          {reasons.map(({ icon: Icon, title, description }) => (
-            <article
+          {reasons.map(({ icon: Icon, title, description }, index) => (
+            <motion.article
               key={title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
               className="group rounded-xl border border-divider bg-default-50/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_14px_28px_rgba(18,59,66,0.08)]"
             >
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:rotate-6">
@@ -78,7 +85,7 @@ const WhyChoose = () => {
               <p className="mt-2 text-sm leading-6 text-default-600">
                 {description}
               </p>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

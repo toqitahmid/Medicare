@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@heroui/react";
 import { Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -35,7 +36,12 @@ export default function MainNavbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 pt-4">
+    <motion.header
+      initial={{ opacity: 0, y: -18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
+      className="sticky top-0 z-50 w-full px-4 pt-4"
+    >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-2xl border border-divider/80 bg-background/85 px-5 text-foreground shadow-[0_12px_35px_rgba(18,59,66,0.12)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_16px_42px_rgba(18,59,66,0.16)] sm:px-6">
         {/* Brand / Logo */}
         <Link
@@ -120,7 +126,12 @@ export default function MainNavbar() {
 
       {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="absolute top-24 left-4 right-4 md:hidden flex flex-col gap-4 rounded-2xl border border-divider bg-background/95 p-6 shadow-xl backdrop-blur-lg">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute top-24 left-4 right-4 md:hidden flex flex-col gap-4 rounded-2xl border border-divider bg-background/95 p-6 shadow-xl backdrop-blur-lg"
+        >
           {menuItems.map((item) => {
             const isActive =
               item.href === "/"
@@ -142,8 +153,8 @@ export default function MainNavbar() {
               </Link>
             );
           })}
-        </div>
+        </motion.div>
       )}
-    </header>
+    </motion.header>
   );
 }
