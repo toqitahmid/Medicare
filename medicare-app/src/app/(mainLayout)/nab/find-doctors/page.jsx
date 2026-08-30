@@ -4,8 +4,12 @@ import { getAllDoctors } from "@/app/lib/api/doctors";
 
 const FindDoctorsPage = async ({ searchParams }) => {
   const filters = await searchParams;
-  const doctors = await getAllDoctors(filters);
-  console.log(doctors);
+  const allDoctors = (await getAllDoctors(filters)) || [];
+
+  // Filter to show only approved/verified doctors (case-insensitive)
+  const doctors = allDoctors.filter(
+    (doctor) => doctor.verificationStatus?.toLowerCase() === "approved",
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -72,13 +76,13 @@ const FindDoctorsPage = async ({ searchParams }) => {
       {/* Header Results Info */}
       <div className="mb-6 flex items-center justify-between">
         <span className="text-sm font-medium text-[var(--text-subtle)]">
-          Showing {doctors?.length || 0} doctors
+          Showing {doctors.length} verified doctors
         </span>
       </div>
 
       {/* Doctors Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {doctors?.map((doctor) => (
+        {doctors.map((doctor) => (
           <div
             key={doctor._id}
             className="flex flex-col justify-between rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] p-5 shadow-sm transition-all hover:shadow-md"
@@ -95,7 +99,7 @@ const FindDoctorsPage = async ({ searchParams }) => {
                   />
                   <span
                     className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg-card)] ${
-                      doctor.verificationStatus === "Approved"
+                      doctor.verificationStatus?.toLowerCase() === "approved"
                         ? "bg-emerald-500"
                         : "bg-amber-500"
                     }`}
@@ -167,7 +171,7 @@ const FindDoctorsPage = async ({ searchParams }) => {
 
             <Link
               href={`/nab/find-doctors/${doctor._id}`}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium  transition-colors border-2"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition-colors"
             >
               <span>View Details</span>
               <i className="gl gl-arrow-right text-base" />

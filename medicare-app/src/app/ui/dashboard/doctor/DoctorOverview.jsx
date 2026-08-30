@@ -10,6 +10,9 @@ import {
   Calendar,
   AlertCircle,
   Stethoscope,
+  ShieldCheck,
+  ShieldAlert,
+  ShieldX,
 } from "lucide-react";
 
 const sections = {
@@ -38,6 +41,7 @@ export default function DoctorOverview({
   doctorPrescriptions = [],
   stats = {},
   activeTab,
+  doctorProfile = {}, // Pass doctor profile object containing verificationStatus
 }) {
   const section = sections[activeTab];
   const SectionIcon = section?.icon || Users;
@@ -55,7 +59,7 @@ export default function DoctorOverview({
       case "appointment-requests":
         return doctorAppointments;
       case "prescription-management":
-        return prescriptions;
+        return doctorPrescriptions;
       default:
         return [];
     }
@@ -92,15 +96,50 @@ export default function DoctorOverview({
     },
   ];
 
+  // Render Verification Badge helper based on doctorProfile.verificationStatus
+  const renderVerificationBadge = () => {
+    const status = doctorProfile?.verificationStatus?.toLowerCase();
+
+    switch (status) {
+      case "approved":
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-200 backdrop-blur-md ring-1 ring-emerald-400/30">
+            <ShieldCheck size={14} className="text-emerald-300" />
+            Verified Doctor
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 px-3 py-1 text-xs font-semibold text-rose-200 backdrop-blur-md ring-1 ring-rose-400/30">
+            <ShieldX size={14} className="text-rose-300" />
+            Verification Rejected
+          </span>
+        );
+      case "pending":
+      default:
+        return (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-xs font-semibold text-amber-200 backdrop-blur-md ring-1 ring-amber-400/30">
+            <ShieldAlert size={14} className="text-amber-300" />
+            Verification Pending
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Banner */}
       <div className="rounded-3xl bg-linear-to-r from-teal-700 via-emerald-700 to-slate-800 p-6 text-white shadow-xl md:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
-          Doctor desk
-        </p>
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+            Doctor desk
+          </p>
+          {/* Dynamic Verification Badge */}
+          {renderVerificationBadge()}
+        </div>
+
         <h2 className="mt-2 text-2xl font-extrabold md:text-3xl">
-          A calmer way to run your clinic.
+          Welcome back, Dr. {doctorProfile?.name || "Doctor"}
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/80">
           Monitor requests, shape your availability, and keep patient care
@@ -148,7 +187,6 @@ export default function DoctorOverview({
                     className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-slate-900"
                   >
                     <div>
-                      {/* Patient & Doctor Context Header */}
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <h4 className="font-bold text-slate-900 dark:text-slate-100">
@@ -168,7 +206,6 @@ export default function DoctorOverview({
                         </span>
                       </div>
 
-                      {/* Symptoms & Description */}
                       <div className="mt-3">
                         <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
                           Symptoms / Reason
@@ -179,7 +216,6 @@ export default function DoctorOverview({
                       </div>
                     </div>
 
-                    {/* Date & Time Footer */}
                     <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800">
                       <span className="flex items-center gap-1">
                         <Calendar size={13} className="text-slate-400" />
