@@ -1,12 +1,16 @@
 "use server";
 
+import { authHeader } from "../core/token";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 // Generic helper function to handle API responses safely
   async function safeFetch(endpoint, errorMessage) {
     const url = `${baseUrl}${endpoint}`;
     try {
-      const res = await fetch(url);
+      const res = await fetch(url,{
+        headers: await authHeader()
+      });
       if (!res.ok) {
         console.error(`${errorMessage} — ${url} (Status: ${res.status})`);
         return [];
