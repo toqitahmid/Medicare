@@ -1,5 +1,6 @@
 "use client";
 
+import { authHeader } from "@/app/lib/core/token";
 import React, { useState, useMemo } from "react";
 
 const ManageSchedule = ({ DoctorData }) => {
@@ -58,7 +59,7 @@ const ManageSchedule = ({ DoctorData }) => {
     if (!DoctorData?._id) return;
     setLoading(true);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     try {
       const response = await fetch(
         `${baseUrl}/api/doctors/update_schedule/${DoctorData._id}`,
@@ -66,6 +67,7 @@ const ManageSchedule = ({ DoctorData }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            ...(await authHeader()),
           },
           body: JSON.stringify({
             availableDays: formData.availableDays,

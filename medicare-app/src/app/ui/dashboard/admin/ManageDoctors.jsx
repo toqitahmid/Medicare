@@ -1,5 +1,6 @@
 "use client";
 
+import { authHeader } from "@/app/lib/core/token";
 import { useState } from "react";
 
 const ManageDoctors = ({ adminDoctors = [] }) => {
@@ -13,7 +14,10 @@ const ManageDoctors = ({ adminDoctors = [] }) => {
     try {
       const response = await fetch(`${baseUrl}/api/admin/doctors/${doctorId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(await authHeader()),
+        },
         body: JSON.stringify({ verificationStatus: newStatus }),
       });
 

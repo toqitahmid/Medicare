@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ToastContainer, toast, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { authHeader } from "@/app/lib/core/token";
 
 export default function PrescriptionManagement({ doctorAppointments = [] }) {
   // Filter only accepted appointments
@@ -81,13 +82,13 @@ export default function PrescriptionManagement({ doctorAppointments = [] }) {
 
     try {
       setIsSubmitting(true);
-    
-      
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
+
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
       const response = await fetch(`${baseUrl}/api/prescriptions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(await authHeader()),
         },
         body: JSON.stringify(payload),
       });

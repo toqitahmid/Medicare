@@ -37,7 +37,7 @@ export const ROLE_SIDEBAR_ITEMS = {
       id: "my-appointments",
       label: "My Appointments",
       icon: Calendar,
-      badge: "2 Upcoming",
+      badge: "Upcoming",
     },
     {
       id: "payment-history",
@@ -69,7 +69,7 @@ export const ROLE_SIDEBAR_ITEMS = {
       id: "appointment-requests",
       label: "Appointment Requests",
       icon: ClipboardList,
-      badge: "3 New",
+      badge: "New",
     },
     {
       id: "prescription-management",
@@ -89,13 +89,13 @@ export const ROLE_SIDEBAR_ITEMS = {
       id: "manage-patients",
       label: "Manage Patients",
       icon: Users,
-      badge: "3 Pending",
+      badge: "Pending",
     },
     {
       id: "manage-doctors",
       label: "Manage Doctors",
       icon: Users,
-      badge: "2 Pending",
+      badge: "Pending",
     },
     {
       id: "all-appointments",

@@ -1,3 +1,4 @@
+import { authHeader } from "@/app/lib/core/token";
 import React, { useState } from "react";
 import {
   FiCalendar,
@@ -19,18 +20,16 @@ export default function AppointmentRequests({ doctorAppointments = [] }) {
   const handleStatusChange = async (id, newStatus) => {
     setLoadingId(id);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     try {
-      const response = await fetch(
-        `${baseUrl}/api/appointments/update/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ appointmentStatus: newStatus }),
+      const response = await fetch(`${baseUrl}/api/appointments/update/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(await authHeader()),
         },
-      );
+        body: JSON.stringify({ appointmentStatus: newStatus }),
+      });
 
       const data = await response.json();
 

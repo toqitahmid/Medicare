@@ -1,5 +1,6 @@
 "use client";
 
+import { authHeader } from "@/app/lib/core/token";
 import { useState } from "react";
 
 const ManagePatients = ({ adminPatients = [] }) => {
@@ -15,7 +16,10 @@ const ManagePatients = ({ adminPatients = [] }) => {
         `${baseUrl}/api/admin/patients/${patientId}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(await authHeader()),
+          },
           body: JSON.stringify({ verificationStatus: newStatus }),
         },
       );
@@ -58,7 +62,6 @@ const ManagePatients = ({ adminPatients = [] }) => {
   return (
     <div className="p-8 text-slate-100 min-h-screen">
       {/* Header */}
-      
 
       {patients.length === 0 ? (
         <div className="bg-[#0f172a] border border-slate-800 rounded-xl p-8 text-center text-slate-400">

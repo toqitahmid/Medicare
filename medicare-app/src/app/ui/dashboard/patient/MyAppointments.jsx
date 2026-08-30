@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { toast, Zoom } from "react-toastify";
+import { authHeader } from "@/app/lib/core/token";
 
 // Helper function to format ISO date strings into readable text
 const formatDate = (dateString) => {
@@ -82,6 +83,7 @@ export default function MyAppointments({ appointments = [] }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(await authHeader()),
         },
         body: JSON.stringify(payload),
       });
@@ -105,7 +107,9 @@ export default function MyAppointments({ appointments = [] }) {
 
       closeReviewModal();
     } catch (error) {
-      toast.error(error.message || "Failed to submit review. Please try again.");
+      toast.error(
+        error.message || "Failed to submit review. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
