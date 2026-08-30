@@ -5,6 +5,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast, Zoom } from "react-toastify";
 
+const TOAST_OPTS = {
+  position: "top-center",
+  autoClose: 2500,
+  hideProgressBar: true,
+  closeOnClick: false,
+  pauseOnHover: false,
+  draggable: true,
+  theme: "dark",
+  transition: Zoom,
+};
+
 export default function AppointmentForm({
   appointments,
   patientPlan,
@@ -16,97 +27,69 @@ export default function AppointmentForm({
     appointmentDate: "",
     appointmentTime: "",
     symptoms: "",
-    paymentStatus: "Pending",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isApproved = patient?.verificationStatus === "approved";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      patientId: patient._id,
-      patientName: patient?.name,
-      doctorId: doctor._id,
-      doctorName: doctor?.name,
-      doctorSpecialization: doctor?.specialization,
-      doctorQualifications: doctor?.qualifications,
-      appointmentDate: formData.appointmentDate,
-      appointmentTime: formData.appointmentTime,
-      symptoms: formData.symptoms,
-      appointmentStatus: "Pending",
-    };
+    // Guard clause: double-check eligibility before submitting
+    if (!isApproved) return;
 
-    if (patient.plan === "N/A") {
-      toast.error("You have to buy a plan!", {
-        position: "top-center",
-        autoClose: 2500,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        theme: "dark",
-        transition: Zoom,
-      });
-      setTimeout(() => {
-        router.push("/plans");
-      }, 2500);
+    // 1. Check Active Plan
+    if (!patient?.plan || patient.plan === "N/A") {
+      toast.error(
+        "You need an active plan to book an appointment!",
+        TOAST_OPTS,
+      );
+      setTimeout(() => router.push("/plans"), 2500);
       return;
     }
 
-    if (appointments.length >= patientPlan.appointments) {
-      toast.error("You reached your limit!", {
-        position: "top-center",
-        autoClose: 2500,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        theme: "dark",
-        transition: Zoom,
-      });
-      setTimeout(() => {
-        router.push("/plans");
-      }, 2500);
+    // 2. Check Appointment Limit
+    if (appointments?.length >= patientPlan?.appointments) {
+      toast.error("You have reached your appointment limit!", TOAST_OPTS);
+      setTimeout(() => router.push("/plans"), 2500);
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      await createAppointment(payload);
-      toast.success("Appointment booked successfully!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        theme: "dark",
-        transition: Zoom,
+      await createAppointment({
+        doctorId: doctor._id,
+        appointmentDate: formData.appointmentDate,
+        appointmentTime: formData.appointmentTime,
+        symptoms: formData.symptoms,
       });
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 2000);
+
+      toast.success("Appointment booked successfully!", {
+        ...TOAST_OPTS,
+        autoClose: 2000,
+      });
+      setTimeout(() => router.push("/dashboard"), 2000);
     } catch (error) {
       console.error("Submission error:", error);
-      toast.error("Something went wrong. Please try again.", {
-        position: "top-center",
-        autoClose: 2500,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        theme: "dark",
-        transition: Zoom,
-      });
+      toast.error(
+        error?.message || "Something went wrong. Please try again.",
+        TOAST_OPTS,
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Helper function to resolve dynamic button text
+  const getButtonText = () => {
+    if (isSubmitting) return "Confirming...";
+    if (isApproved) return "Confirm Appointment";
+    return "Not Eligible to Book";
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Pre-filled Doctor Information */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Doctor Name</label>
@@ -143,7 +126,6 @@ export default function AppointmentForm({
         </div>
       </div>
 
-      {/* Date & Time Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">
@@ -152,7 +134,8 @@ export default function AppointmentForm({
           <input
             type="date"
             required
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={!isApproved}
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-800"
             value={formData.appointmentDate}
             onChange={(e) =>
               setFormData({ ...formData, appointmentDate: e.target.value })
@@ -167,7 +150,8 @@ export default function AppointmentForm({
           <input
             type="time"
             required
-            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={!isApproved}
+            className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-800"
             value={formData.appointmentTime}
             onChange={(e) =>
               setFormData({ ...formData, appointmentTime: e.target.value })
@@ -176,7 +160,6 @@ export default function AppointmentForm({
         </div>
       </div>
 
-      {/* Symptoms Field */}
       <div>
         <label className="block text-sm font-medium mb-1">
           Symptoms / Reason for Visit
@@ -184,8 +167,9 @@ export default function AppointmentForm({
         <textarea
           rows={4}
           required
+          disabled={!isApproved}
           placeholder="Describe your symptoms or primary concern..."
-          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent p-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-800"
           value={formData.symptoms}
           onChange={(e) =>
             setFormData({ ...formData, symptoms: e.target.value })
@@ -193,13 +177,16 @@ export default function AppointmentForm({
         />
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-lg bg-blue-600 px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50"
+        disabled={isSubmitting || !isApproved}
+        className={`w-full rounded-lg px-5 py-3 text-center text-sm font-medium text-white transition-colors focus:outline-none focus:ring-4 ${
+          isApproved
+            ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-300 dark:focus:ring-blue-800 disabled:opacity-50"
+            : "bg-slate-400 dark:bg-slate-600 cursor-not-allowed"
+        }`}
       >
-        {isSubmitting ? "Confirming..." : "Confirm Appointment"}
+        {getButtonText()}
       </button>
     </form>
   );

@@ -10,8 +10,10 @@ import {
   Activity,
   CreditCard,
   GraduationCap,
-  ShieldCheck, // Added for Current Plan
-  Receipt, // Added for Total Payments
+  ShieldCheck,
+  Receipt,
+  CheckCircle2, // Icon added for verified status
+  Clock3, // Icon added for pending status
 } from "lucide-react";
 import Link from "next/link";
 
@@ -19,8 +21,9 @@ const PatientOverview = ({
   appointments = [],
   onNavigateTab,
   payments = [],
+  // Pass user object or destructure verificationStatus directly
+  user = { verificationStatus: "pending" },
 }) => {
-  // Filter for Pending or Accepted appointments
   const upcomingAppointments = appointments.filter((app) => {
     const status = app?.appointmentStatus?.toLowerCase();
     return status === "pending" || status === "accepted";
@@ -33,10 +36,8 @@ const PatientOverview = ({
       ? payments[payments.length - 1]
       : null;
 
-  // Safely get plan ID or fall back to a default label
   const latestPlanId = paymentInfo?.planId || "No Active Plan";
 
-  // Format date safely (e.g., '2026-08-25' -> 'Aug 25, 2026')
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     const date = new Date(dateStr);
@@ -49,15 +50,45 @@ const PatientOverview = ({
         });
   };
 
+  // Helper component to render the dynamic status badge
+  const renderVerificationBadge = (status) => {
+    switch (status?.toLowerCase()) {
+      case "verified":
+      case "approved":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2
+              size={13}
+              className="text-emerald-600 dark:text-emerald-400"
+            />
+            Verified
+          </span>
+        );
+      case "pending":
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <Clock3 size={13} className="text-amber-600 dark:text-amber-400" />
+            Verification Pending
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Banner Welcome */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-6 md:p-8 text-white shadow-xl">
         <div className="absolute right-0 top-0 -mr-12 -mt-12 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md mb-3">
-            <HeartPulse size={14} /> Health Overview
-          </span>
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md">
+              <HeartPulse size={14} /> Health Overview
+            </span>
+            {/* Added Verification Badge in Banner */}
+            {renderVerificationBadge(user?.verificationStatus)}
+          </div>
           <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
             Welcome back to your Health Hub!
           </h2>
@@ -146,7 +177,6 @@ const PatientOverview = ({
             key={index}
             className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4"
           >
-            {/* Section Header & Badges */}
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Calendar className="text-blue-600" size={18} /> Next Scheduled
@@ -167,7 +197,6 @@ const PatientOverview = ({
               )}
             </div>
 
-            {/* Appointment Card Data */}
             {NXA ? (
               <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                 <div className="flex items-start gap-4">
@@ -184,8 +213,15 @@ const PatientOverview = ({
 
                   <div className="space-y-1.5">
                     <div>
-                      <h4 className="font-bold text-slate-900 dark:text-white text-base">
+                      <h4 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-1.5">
                         Dr. {NXA.doctorName}
+                        {/* Optional Doctor verification check */}
+                        {NXA.isVerified && (
+                          <CheckCircle2
+                            size={16}
+                            className="text-blue-500 fill-blue-500/20"
+                          />
+                        )}
                       </h4>
 
                       {NXA.doctorQualifications && (
