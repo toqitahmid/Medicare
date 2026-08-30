@@ -1,12 +1,15 @@
 'use server';
+
+import { authHeader } from "../core/token";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 
 export async function getPatientByUserId(userId) {
     try{
         const res = await fetch(`${baseUrl}/api/patients/${userId}`,{
-            cache: "no-store"
-        });
+              headers: await authHeader(),
+            });
 
         if(!res.ok){
             console.error(`failed to fetch patients ${res.status}`);

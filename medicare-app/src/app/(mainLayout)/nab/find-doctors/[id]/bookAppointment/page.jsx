@@ -7,15 +7,18 @@ import { getPlanById } from "@/app/lib/api/plans";
 
 const page = async ({ params }) => {
   const user = await getUserSession();
-  const userId = user.id;
+  const userId = user?.id;
   const patient = await getPatientInfo(userId);
   const { id: doctorId } = await params;
   const doctor = await getDoctorById(doctorId);
 
-  const appointments = await getAppointmentById(patient?._id)
-  const patientPlan = await getPlanById(patient?.plan)
+  
+  const appointments = patient?._id
+    ? await getAppointmentById(patient._id)
+    : [];
+  const patientPlan = patient?.plan ? await getPlanById(patient.plan) : null;
   console.log('patient plan: ',patient?.plan);
-  console.log('total appointments: ', appointments.length);
+  console.log('total appointments: ', appointments?.length);
   console.log('patient plan: ', patientPlan);
 
 
@@ -41,7 +44,7 @@ const page = async ({ params }) => {
               </h2>
               <div className="mt-4 flex items-center space-x-4">
                 <img
-                  src={doctor.profileImage}
+                  src={doctor?.profileImage}
                   alt={doctor.name}
                   className="h-16 w-16 rounded-full object-cover border border-slate-200 dark:border-slate-700"
                 />
