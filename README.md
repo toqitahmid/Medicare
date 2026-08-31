@@ -183,7 +183,7 @@ Admin Email: admin@medicareconnect.com
 Admin Password: AdminSecurePass#2026
 
 Links:
-Live Site Link: https://medicare-connect-app.vercel.app
-GitHub Repository (Client): https://github.com/username/medicare-connect-client
-GitHub Repository (Server): https://github.com/username/medicare-connect-server
+Live Site Link: https://medicare-alpha-azure.vercel.app
+GitHub Repository (Client): https://github.com/toqitahmid/Medicare
+GitHub Repository (Server): https://github.com/toqitahmid/Medicare-Server
 ```
