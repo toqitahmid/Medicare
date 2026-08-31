@@ -210,6 +210,7 @@ export default function DashboardPage() {
         default:
           return (
             <DoctorOverview
+              DoctorData={DoctorData}
               doctorPrescriptions={doctorPrescriptions}
               doctorAppointments={doctorAppointments}
               doctorTodayAppointments={doctorTodayAppointments}
@@ -259,6 +260,7 @@ export default function DashboardPage() {
         default:
           return (
             <PatientOverview
+              PatientData={PatientData}
               payments={payments}
               appointments={appointments}
               onNavigateTab={setActiveTab}

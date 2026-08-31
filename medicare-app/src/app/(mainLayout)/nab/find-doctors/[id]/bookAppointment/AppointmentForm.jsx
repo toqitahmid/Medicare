@@ -49,7 +49,7 @@ export default function AppointmentForm({
     }
 
     // 2. Check Appointment Limit
-    if (appointments?.length >= patientPlan?.appointments) {
+    if (appointments?.length >= patientPlan?.maxApplicable) {
       toast.error("You have reached your appointment limit!", TOAST_OPTS);
       setTimeout(() => router.push("/plans"), 2500);
       return;
@@ -59,7 +59,16 @@ export default function AppointmentForm({
 
     try {
       await createAppointment({
-        doctorId: doctor._id,
+        // Doctor details
+        doctorId: doctor?._id,
+        doctorName: doctor?.name,
+
+        // Patient details
+        patientId: patient?._id,
+        patientName: patient?.name,
+
+        // Appointment details
+        appointmentId: crypto.randomUUID(), // Omit this line if your backend DB generates _id automatically
         appointmentDate: formData.appointmentDate,
         appointmentTime: formData.appointmentTime,
         symptoms: formData.symptoms,

@@ -13,6 +13,9 @@ import {
   ShieldCheck,
   ShieldAlert,
   ShieldX,
+  Building2,
+  DollarSign,
+  Award,
 } from "lucide-react";
 
 const sections = {
@@ -41,21 +44,46 @@ export default function DoctorOverview({
   doctorPrescriptions = [],
   stats = {},
   activeTab,
-  doctorProfile = {}, // Pass doctor profile object containing verificationStatus
+  DoctorData = {},
+  doctorProfile = {}, // Fallback prop support
 }) {
+  // Normalize doctor profile data from props
+  const profile =
+    DoctorData && Object.keys(DoctorData).length > 0
+      ? DoctorData
+      : doctorProfile || {};
+
+  console.log("doctor data: ", profile);
+  console.log("doctor appointments: ", doctorAppointments);
+  console.log("doctor today appointments: ", doctorTodayAppointments);
+  console.log("doctor schedules: ", schedules);
+  console.log("doctor prescription: ", doctorPrescriptions);
+
   const section = sections[activeTab];
   const SectionIcon = section?.icon || Users;
 
-  // Filter pending appointments matching your appointmentStatus schema field
+  // Filter pending appointments matching appointmentStatus schema field
   const pendingAppointments = doctorAppointments.filter(
-    (apt) => apt.appointmentStatus?.toLowerCase() === "pending",
+    (apt) =>
+      apt.verificationStatus?.toLowerCase() === "pending" ||
+      apt.appointmentStatus?.toLowerCase() === "pending",
   );
 
   // Map section data dynamically based on active tab
   const getSectionRows = () => {
     switch (activeTab) {
       case "manage-schedule":
-        return schedules;
+        return schedules.length > 0
+          ? schedules
+          : profile.availableDays
+            ? [
+                {
+                  id: "1",
+                  label: `Available Days: ${profile.availableDays}`,
+                  status: profile.availableSlots || "Active",
+                },
+              ]
+            : [];
       case "appointment-requests":
         return doctorAppointments;
       case "prescription-management":
@@ -78,7 +106,7 @@ export default function DoctorOverview({
     },
     {
       label: "Total Appointments",
-      value: stats.newRequests ?? doctorAppointments.length,
+      value: doctorAppointments.length ?? 0,
       icon: ClipboardCheck,
       note: stats.newRequestsNote ?? null,
     },
@@ -90,15 +118,15 @@ export default function DoctorOverview({
     },
     {
       label: "Prescriptions",
-      value: doctorPrescriptions?.length,
+      value: doctorPrescriptions?.length ?? 0,
       icon: FileText,
       note: stats.prescriptionsNote ?? null,
     },
   ];
 
-  // Render Verification Badge helper based on doctorProfile.verificationStatus
+  // Render Verification Badge helper based on profile.verificationStatus
   const renderVerificationBadge = () => {
-    const status = doctorProfile?.verificationStatus?.toLowerCase();
+    const status = profile?.verificationStatus?.toLowerCase();
 
     switch (status) {
       case "approved":
@@ -138,13 +166,46 @@ export default function DoctorOverview({
           {renderVerificationBadge()}
         </div>
 
-        <h2 className="mt-2 text-2xl font-extrabold md:text-3xl">
-          Welcome back, Dr. {doctorProfile?.name || "Doctor"}
-        </h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-emerald-50/80">
-          Monitor requests, shape your availability, and keep patient care
-          moving without losing the clinical details.
-        </p>
+        <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+          {profile?.profileImage && (
+            <img
+              src={profile.profileImage}
+              alt={profile?.name || "Doctor Profile"}
+              className="h-16 w-16 rounded-full border-2 border-emerald-300/40 object-cover shadow-md"
+            />
+          )}
+          <div>
+            <h2 className="text-2xl font-extrabold md:text-3xl">
+              Welcome back, {profile?.name ? `Dr. ${profile.name}` : "Doctor"}
+            </h2>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-emerald-100/90">
+              {profile?.specialization && (
+                <span className="flex items-center gap-1">
+                  <Stethoscope size={13} className="text-emerald-300" />
+                  {profile.specialization}
+                </span>
+              )}
+              {profile?.qualifications && (
+                <span className="flex items-center gap-1">
+                  <Award size={13} className="text-emerald-300" />
+                  {profile.qualifications}
+                </span>
+              )}
+              {profile?.hospitalName && (
+                <span className="flex items-center gap-1">
+                  <Building2 size={13} className="text-emerald-300" />
+                  {profile.hospitalName}
+                </span>
+              )}
+              {profile?.consultationFee && (
+                <span className="flex items-center gap-1">
+                  <DollarSign size={13} className="text-emerald-300" />$
+                  {profile.consultationFee} Fee
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {activeTab === "dashboard-overview" ? (
@@ -197,12 +258,12 @@ export default function DoctorOverview({
                               size={12}
                               className="text-teal-600 dark:text-teal-400"
                             />
-                            {apt.doctorSpecialization}
+                            {apt.doctorSpecialization || profile.specialization}
                           </p>
                         </div>
                         <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-600/20 ring-inset dark:bg-amber-950/40 dark:text-amber-400">
                           <AlertCircle size={12} />
-                          {apt.appointmentStatus}
+                          {apt.appointmentStatus || apt.verificationStatus}
                         </span>
                       </div>
 

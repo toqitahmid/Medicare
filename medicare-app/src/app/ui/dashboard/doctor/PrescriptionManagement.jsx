@@ -72,10 +72,10 @@ export default function PrescriptionManagement({ doctorAppointments = [] }) {
 
     // Construct Payload matching your required structure
     const payload = {
-      doctorId: selectedAppointment.doctorId,
-      doctorName: selectedAppointment.doctorName,
-      patientId: selectedAppointment.patientId,
-      appointmentId: selectedAppointment._id,
+      doctorId: selectedAppointment?.doctorId,
+      doctorName: selectedAppointment?.doctorName,
+      patientId: selectedAppointment?.patientId,
+      appointmentId: selectedAppointment?._id,
       notes,
       medicines: medicines.filter((m) => m.name.trim() !== ""),
     };

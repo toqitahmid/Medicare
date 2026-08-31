@@ -1,4 +1,7 @@
 'use server';
+
+import { authHeader } from "../core/token";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL; 
 
 
@@ -51,7 +54,7 @@ export async function getDoctorById(doctorId) {
 export async function getDoctorByUserId(userId) {
     try{
         const res = await fetch(`${baseUrl}/api/doctors/user/${userId}`,{
-            cache: "no-store"
+          headers: await authHeader(),
         });
 
         if(!res.ok){

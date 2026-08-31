@@ -8,12 +8,11 @@ import {
   CalendarX,
   Stethoscope,
   Activity,
-  CreditCard,
   GraduationCap,
   ShieldCheck,
   Receipt,
-  CheckCircle2, // Icon added for verified status
-  Clock3, // Icon added for pending status
+  CheckCircle2,
+  Clock3,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,8 +20,7 @@ const PatientOverview = ({
   appointments = [],
   onNavigateTab,
   payments = [],
-  // Pass user object or destructure verificationStatus directly
-  user = { verificationStatus: "pending" },
+  PatientData = {},
 }) => {
   const upcomingAppointments = appointments.filter((app) => {
     const status = app?.appointmentStatus?.toLowerCase();
@@ -31,12 +29,15 @@ const PatientOverview = ({
 
   const upcomingVisitsCount = upcomingAppointments.length;
   const nextAppointment = upcomingAppointments.slice(0, 2);
+
   const paymentInfo =
     Array.isArray(payments) && payments.length > 0
       ? payments[payments.length - 1]
       : null;
 
-  const latestPlanId = paymentInfo?.planId || "No Active Plan";
+  // Fallback to PatientData.plan if payments array is empty
+  const latestPlanId =
+    paymentInfo?.planId || PatientData?.plan || "No Active Plan";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
@@ -50,7 +51,7 @@ const PatientOverview = ({
         });
   };
 
-  // Helper component to render the dynamic status badge
+  // Render verification badge dynamically
   const renderVerificationBadge = (status) => {
     switch (status?.toLowerCase()) {
       case "verified":
@@ -86,11 +87,10 @@ const PatientOverview = ({
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md">
               <HeartPulse size={14} /> Health Overview
             </span>
-            {/* Added Verification Badge in Banner */}
-            {renderVerificationBadge(user?.verificationStatus)}
+            {renderVerificationBadge(PatientData?.verificationStatus)}
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-            Welcome back to your Health Hub!
+          <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight capitalize">
+            Welcome back{PatientData?.name ? `, ${PatientData.name}` : ""}!
           </h2>
           <p className="mt-2 text-blue-100 text-sm">
             Manage your medical consultations, view prescriptions, track
@@ -147,7 +147,7 @@ const PatientOverview = ({
         <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs font-medium text-slate-500">Current Plan</p>
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1 capitalize">
               {latestPlanId}
             </h3>
           </div>
@@ -159,7 +159,7 @@ const PatientOverview = ({
         {/* Total Payments Card */}
         <div className="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-slate-500">Total Payments</p>
+            <p className="text-xs font-medium text-slate-500">Total Payments - in times</p>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
               {payments.length}
             </h3>
@@ -172,32 +172,28 @@ const PatientOverview = ({
 
       {/* Main Grid Section */}
       <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6 grid-cols-1">
-        {nextAppointment.map((NXA, index) => (
-          <div
-            key={index}
-            className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Calendar className="text-blue-600" size={18} /> Next Scheduled
-                Appointment
-              </h3>
-              {NXA && (
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
-                      NXA.appointmentStatus?.toLowerCase() === "accepted"
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
-                        : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
-                    }`}
-                  >
-                    {NXA.appointmentStatus}
-                  </span>
-                </div>
-              )}
-            </div>
+        {nextAppointment.length > 0 ? (
+          nextAppointment.map((NXA, index) => (
+            <div
+              key={index}
+              className="p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Calendar className="text-blue-600" size={18} /> Next
+                  Scheduled Appointment
+                </h3>
+                <span
+                  className={`px-2.5 py-1 rounded-full text-xs font-bold capitalize ${
+                    NXA.appointmentStatus?.toLowerCase() === "accepted"
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300"
+                      : "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"
+                  }`}
+                >
+                  {NXA.appointmentStatus}
+                </span>
+              </div>
 
-            {NXA ? (
               <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-lg flex items-center justify-center shadow-md shrink-0">
@@ -215,7 +211,6 @@ const PatientOverview = ({
                     <div>
                       <h4 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-1.5">
                         Dr. {NXA.doctorName}
-                        {/* Optional Doctor verification check */}
                         {NXA.isVerified && (
                           <CheckCircle2
                             size={16}
@@ -256,30 +251,29 @@ const PatientOverview = ({
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-800/30 border border-dashed border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center gap-3">
-                <div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
-                  <CalendarX size={24} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    No upcoming visits
-                  </p>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    You don't have any pending or accepted consultations right
-                    now.
-                  </p>
-                </div>
-                <Link
-                  href="/nab/find-doctors"
-                  className="mt-1 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors shadow-xs"
-                >
-                  Book a Visit
-                </Link>
-              </div>
-            )}
+            </div>
+          ))
+        ) : (
+          <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-800/30 border border-dashed border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center gap-3 lg:col-span-2">
+            <div className="p-3 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400">
+              <CalendarX size={24} />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                No upcoming visits
+              </p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                You don't have any pending or accepted consultations right now.
+              </p>
+            </div>
+            <Link
+              href="/nab/find-doctors"
+              className="mt-1 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-colors shadow-xs"
+            >
+              Book a Visit
+            </Link>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
