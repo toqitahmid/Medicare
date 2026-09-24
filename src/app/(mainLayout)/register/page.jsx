@@ -21,25 +21,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "patient",
-    phone: "",
-    photo: "",
-    gender: "",
-    // Doctor Fields
-    doctorName: "",
-    specialization: "",
-    qualifications: "",
-    experience: "",
-    consultationFee: "",
-    hospitalName: "",
-    profileImage: "",
-    availableDays: "",
-    availableSlots: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -50,45 +34,46 @@ export default function RegisterPage() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.email) {
+    if (!name) {
+      newErrors.name = "Name is required.";
+    } else if (name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters long.";
+    }
+
+    if (!email) {
       newErrors.email = "Email address is required.";
-    } else if (!EMAIL_REGEX.test(formData.email)) {
+    } else if (!EMAIL_REGEX.test(email)) {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    if (!formData.password) {
+    if (!password) {
       newErrors.password = "Password is required.";
-    } else if (formData.password.length < 6) {
+    } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters long.";
-    }
-
-    if (formData.role === "patient") {
-      if (!formData.name) newErrors.name = "Name is required.";
-      if (!formData.phone) newErrors.phone = "Phone number is required.";
-      if (!formData.gender) newErrors.gender = "Gender is required.";
-    } else if (formData.role === "doctor") {
-      if (!formData.doctorName)
-        newErrors.doctorName = "Doctor name is required.";
-      if (!formData.specialization)
-        newErrors.specialization = "Specialization is required.";
-      if (!formData.qualifications)
-        newErrors.qualifications = "Qualifications are required.";
-      if (!formData.experience)
-        newErrors.experience = "Experience is required.";
-      if (!formData.consultationFee)
-        newErrors.consultationFee = "Consultation fee is required.";
-      if (!formData.hospitalName)
-        newErrors.hospitalName = "Hospital name is required.";
+    } else if (!/(?=.*[0-9])/.test(password)) {
+      newErrors.password = "Password must contain at least one number.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field) => (e) => {
-    const value = typeof e === "string" ? e : (e?.target?.value ?? e);
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => (prev[field] ? { ...prev, [field]: "" } : prev));
+  const handleNameChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setName(val);
+    if (errors.name) setErrors((prev) => ({ ...prev, name: "" }));
+  };
+
+  const handleEmailChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setEmail(val);
+    if (errors.email) setErrors((prev) => ({ ...prev, email: "" }));
+  };
+
+  const handlePasswordChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setPassword(val);
+    if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -99,47 +84,28 @@ export default function RegisterPage() {
 
     try {
       const payload = {
-        email: formData.email,
-        password: formData.password,
-        name: formData.role === "doctor" ? formData.doctorName : formData.name,
-        role: formData.role,
-        ...(formData.role === "patient"
-          ? {
-              role: 'patient',
-              phone: formData.phone,
-              gender: formData.gender,
-              photo: formData.photo,
-            }
-          : {
-              role: 'doctor',
-              specialization: formData.specialization,
-              qualifications: formData.qualifications,
-              experience: formData.experience,
-              consultationFee: formData.consultationFee,
-              hospitalName: formData.hospitalName,
-              profileImage: formData.profileImage,
-              availableDays: formData.availableDays,
-              availableSlots: formData.availableSlots,
-            }),
+        email: email,
+        password: password,
+        name: name,
         callbackURL: "/",
       };
-      if(payload){
-        toast.success("You registered successfully!", {
-          position: "top-center",
-          autoClose: 2500,
-          hideProgressBar: true,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          theme: "dark",
-          transition: Zoom,
-        });
-      }
-      console.log("SENDING PAYLOAD:", payload);
-      const { error } = await authClient.signUp.email(payload);
-      router.push("/");
 
+      const { error } = await authClient.signUp.email(payload);
+      
       if (error) throw new Error(error.message || "Registration failed");
+
+      toast.success("You registered successfully!", {
+        position: "top-center",
+        autoClose: 2500,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "dark",
+        transition: Zoom,
+      });
+
+      router.push("/");
 
       addToast({
         title: "Registration Complete",
@@ -166,27 +132,37 @@ export default function RegisterPage() {
         </div>
 
         <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* Role Selection */}
-          <div className="flex flex-col gap-1.5">
+          {/* Name Input */}
+          <TextField
+            name="name"
+            value={name}
+            onChange={handleNameChange}
+            isInvalid={Boolean(errors.name)}
+            isRequired
+            className="flex flex-col gap-1.5"
+          >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-              Select Role
+              Full Name
             </Label>
-            <select
-              value={formData.role}
-              onChange={handleChange("role")}
-              className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
-            >
-              <option value="patient">Patient</option>
-              <option value="doctor">Doctor</option>
-            </select>
-          </div>
+            <Input
+              placeholder="John Doe"
+              className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
+                errors.name
+                  ? "border-danger focus:ring-2 focus:ring-danger/20"
+                  : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
+              }`}
+            />
+            <FieldError className="text-xs text-danger font-medium mt-0.5">
+              {errors.name}
+            </FieldError>
+          </TextField>
 
           {/* Email Input */}
           <TextField
             name="email"
             type="email"
-            value={formData.email}
-            onChange={handleChange("email")}
+            value={email}
+            onChange={handleEmailChange}
             isInvalid={Boolean(errors.email)}
             isRequired
             className="flex flex-col gap-1.5"
@@ -211,8 +187,8 @@ export default function RegisterPage() {
           <TextField
             name="password"
             type={isVisible ? "text" : "password"}
-            value={formData.password}
-            onChange={handleChange("password")}
+            value={password}
+            onChange={handlePasswordChange}
             isInvalid={Boolean(errors.password)}
             isRequired
             className="flex flex-col gap-1.5"
@@ -246,297 +222,6 @@ export default function RegisterPage() {
               {errors.password}
             </FieldError>
           </TextField>
-
-          {/* USER SPECIFIC FIELDS */}
-          {formData.role === "patient" && (
-            <>
-              <TextField
-                name="name"
-                value={formData.name}
-                onChange={handleChange("name")}
-                isInvalid={Boolean(errors.name)}
-                isRequired
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Full Name
-                </Label>
-                <Input
-                  placeholder="John Doe"
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                    errors.name
-                      ? "border-danger focus:ring-2 focus:ring-danger/20"
-                      : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  }`}
-                />
-                <FieldError className="text-xs text-danger font-medium mt-0.5">
-                  {errors.name}
-                </FieldError>
-              </TextField>
-
-              <TextField
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange("phone")}
-                isInvalid={Boolean(errors.phone)}
-                isRequired
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Phone Number
-                </Label>
-                <Input
-                  placeholder="+1 (555) 000-0000"
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                    errors.phone
-                      ? "border-danger focus:ring-2 focus:ring-danger/20"
-                      : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  }`}
-                />
-                <FieldError className="text-xs text-danger font-medium mt-0.5">
-                  {errors.phone}
-                </FieldError>
-              </TextField>
-
-              <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Gender
-                </Label>
-                <select
-                  value={formData.gender}
-                  onChange={handleChange("gender")}
-                  className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
-                >
-                  <option value="" disabled>
-                    Select Gender
-                  </option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.gender && (
-                  <p className="text-xs text-danger font-medium mt-0.5">
-                    {errors.gender}
-                  </p>
-                )}
-              </div>
-
-              <TextField
-                name="photo"
-                value={formData.photo}
-                onChange={handleChange("photo")}
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Photo URL
-                </Label>
-                <Input
-                  placeholder="https://example.com/photo.jpg"
-                  className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground placeholder:text-default-400 text-sm focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
-                />
-              </TextField>
-            </>
-          )}
-
-          {/* DOCTOR SPECIFIC FIELDS */}
-          {formData.role === "doctor" && (
-            <>
-              <TextField
-                name="doctorName"
-                value={formData.doctorName}
-                onChange={handleChange("doctorName")}
-                isInvalid={Boolean(errors.doctorName)}
-                isRequired
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Doctor Name
-                </Label>
-                <Input
-                  placeholder="Dr. Jane Doe"
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                    errors.doctorName
-                      ? "border-danger focus:ring-2 focus:ring-danger/20"
-                      : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  }`}
-                />
-                <FieldError className="text-xs text-danger font-medium mt-0.5">
-                  {errors.doctorName}
-                </FieldError>
-              </TextField>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TextField
-                  name="specialization"
-                  value={formData.specialization}
-                  onChange={handleChange("specialization")}
-                  isInvalid={Boolean(errors.specialization)}
-                  isRequired
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Specialization
-                  </Label>
-                  <Input
-                    placeholder="e.g. Cardiology"
-                    className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                      errors.specialization
-                        ? "border-danger focus:ring-2 focus:ring-danger/20"
-                        : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                    }`}
-                  />
-                  <FieldError className="text-xs text-danger font-medium mt-0.5">
-                    {errors.specialization}
-                  </FieldError>
-                </TextField>
-
-                <TextField
-                  name="qualifications"
-                  value={formData.qualifications}
-                  onChange={handleChange("qualifications")}
-                  isInvalid={Boolean(errors.qualifications)}
-                  isRequired
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Qualifications
-                  </Label>
-                  <Input
-                    placeholder="MBBS, MD"
-                    className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                      errors.qualifications
-                        ? "border-danger focus:ring-2 focus:ring-danger/20"
-                        : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                    }`}
-                  />
-                  <FieldError className="text-xs text-danger font-medium mt-0.5">
-                    {errors.qualifications}
-                  </FieldError>
-                </TextField>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TextField
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleChange("experience")}
-                  isInvalid={Boolean(errors.experience)}
-                  isRequired
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Experience (Years)
-                  </Label>
-                  <Input
-                    placeholder="5"
-                    className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                      errors.experience
-                        ? "border-danger focus:ring-2 focus:ring-danger/20"
-                        : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                    }`}
-                  />
-                  <FieldError className="text-xs text-danger font-medium mt-0.5">
-                    {errors.experience}
-                  </FieldError>
-                </TextField>
-
-                <TextField
-                  name="consultationFee"
-                  value={formData.consultationFee}
-                  onChange={handleChange("consultationFee")}
-                  isInvalid={Boolean(errors.consultationFee)}
-                  isRequired
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Consultation Fee ($)
-                  </Label>
-                  <Input
-                    placeholder="100"
-                    className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                      errors.consultationFee
-                        ? "border-danger focus:ring-2 focus:ring-danger/20"
-                        : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                    }`}
-                  />
-                  <FieldError className="text-xs text-danger font-medium mt-0.5">
-                    {errors.consultationFee}
-                  </FieldError>
-                </TextField>
-              </div>
-
-              <TextField
-                name="hospitalName"
-                value={formData.hospitalName}
-                onChange={handleChange("hospitalName")}
-                isInvalid={Boolean(errors.hospitalName)}
-                isRequired
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Hospital Name
-                </Label>
-                <Input
-                  placeholder="City General Hospital"
-                  className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
-                    errors.hospitalName
-                      ? "border-danger focus:ring-2 focus:ring-danger/20"
-                      : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
-                  }`}
-                />
-                <FieldError className="text-xs text-danger font-medium mt-0.5">
-                  {errors.hospitalName}
-                </FieldError>
-              </TextField>
-
-              <TextField
-                name="profileImage"
-                value={formData.profileImage}
-                onChange={handleChange("profileImage")}
-                className="flex flex-col gap-1.5"
-              >
-                <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                  Profile Image URL
-                </Label>
-                <Input
-                  placeholder="https://example.com/doctor.jpg"
-                  className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground placeholder:text-default-400 text-sm focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
-                />
-              </TextField>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TextField
-                  name="availableDays"
-                  value={formData.availableDays}
-                  onChange={handleChange("availableDays")}
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Available Days
-                  </Label>
-                  <Input
-                    placeholder="Mon, Wed, Fri"
-                    className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground placeholder:text-default-400 text-sm focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
-                  />
-                </TextField>
-
-                <TextField
-                  name="availableSlots"
-                  value={formData.availableSlots}
-                  onChange={handleChange("availableSlots")}
-                  className="flex flex-col gap-1.5"
-                >
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
-                    Available Slots
-                  </Label>
-                  <Input
-                    placeholder="09:00 AM - 05:00 PM"
-                    className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground placeholder:text-default-400 text-sm focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
-                  />
-                </TextField>
-              </div>
-            </>
-          )}
 
           {errors.form && (
             <p className="text-sm text-danger text-center font-medium">
