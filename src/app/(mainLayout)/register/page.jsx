@@ -24,6 +24,10 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("patient");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -54,6 +58,14 @@ export default function RegisterPage() {
       newErrors.password = "Password must contain at least one number.";
     }
 
+    if (!phone) {
+      newErrors.phone = "Phone number is required.";
+    }
+
+    if (!gender) {
+      newErrors.gender = "Gender is required.";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,6 +88,28 @@ export default function RegisterPage() {
     if (errors.password) setErrors((prev) => ({ ...prev, password: "" }));
   };
 
+  const handleRoleChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setRole(val);
+  };
+
+  const handlePhoneChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setPhone(val);
+    if (errors.phone) setErrors((prev) => ({ ...prev, phone: "" }));
+  };
+
+  const handleGenderChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setGender(val);
+    if (errors.gender) setErrors((prev) => ({ ...prev, gender: "" }));
+  };
+
+  const handlePhotoChange = (e) => {
+    const val = typeof e === "string" ? e : (e?.target?.value ?? e);
+    setPhoto(val);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm() || isLoading) return;
@@ -87,6 +121,10 @@ export default function RegisterPage() {
         email: email,
         password: password,
         name: name,
+        role: role,
+        phone: phone,
+        gender: gender,
+        photo: photo,
         callbackURL: "/",
       };
 
@@ -132,6 +170,21 @@ export default function RegisterPage() {
         </div>
 
         <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          {/* Role Selection */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
+              Select Role
+            </Label>
+            <select
+              value={role}
+              onChange={handleRoleChange}
+              className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+            >
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+
           {/* Name Input */}
           <TextField
             name="name"
@@ -221,6 +274,69 @@ export default function RegisterPage() {
             <FieldError className="text-xs text-danger font-medium mt-0.5">
               {errors.password}
             </FieldError>
+          </TextField>
+
+          {/* Phone Input */}
+          <TextField
+            name="phone"
+            value={phone}
+            onChange={handlePhoneChange}
+            isInvalid={Boolean(errors.phone)}
+            isRequired
+            className="flex flex-col gap-1.5"
+          >
+            <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
+              Phone Number
+            </Label>
+            <Input
+              placeholder="+1 (555) 000-0000"
+              className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground placeholder:text-default-400 text-sm transition-all outline-none ${
+                errors.phone
+                  ? "border-danger focus:ring-2 focus:ring-danger/20"
+                  : "border-default-200 focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20"
+              }`}
+            />
+            <FieldError className="text-xs text-danger font-medium mt-0.5">
+              {errors.phone}
+            </FieldError>
+          </TextField>
+
+          {/* Gender Selection */}
+          <div className="flex flex-col gap-1.5">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
+              Gender
+            </Label>
+            <select
+              value={gender}
+              onChange={handleGenderChange}
+              className={`w-full px-4 py-2.5 rounded-xl border bg-default-100 text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all ${
+                errors.gender ? "border-danger" : "border-default-200"
+              }`}
+            >
+              <option value="" disabled>Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            {errors.gender && (
+              <p className="text-xs text-danger font-medium mt-0.5">{errors.gender}</p>
+            )}
+          </div>
+
+          {/* Photo URL Input */}
+          <TextField
+            name="photo"
+            value={photo}
+            onChange={handlePhotoChange}
+            className="flex flex-col gap-1.5"
+          >
+            <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
+              Photo URL
+            </Label>
+            <Input
+              placeholder="https://example.com/photo.jpg"
+              className="w-full px-4 py-2.5 rounded-xl border border-default-200 bg-default-100 text-foreground placeholder:text-default-400 text-sm focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all outline-none"
+            />
           </TextField>
 
           {errors.form && (
