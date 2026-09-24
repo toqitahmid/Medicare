@@ -24,17 +24,44 @@ const patientNavItems = [
     },
     {
         label: "My Appointments",
-        href: "/patientDashboard/overView",
+        href: "/patientDashboard/appointments",
         icon: Building2,
     },
     {
         label: "Payment History",
-        href: "/patientDashboard/overView", 
+        href: "/patientDashboard/payment", 
         icon: FileText,
     },
     {
       label: "My Reviews",
-      href: "/patientDashboard/overView",
+      href: "/patientDashboard/reviews",
+      icon: Settings,
+    },
+];
+const doctorNavItems = [
+    {
+        label: "Overview",
+        href: "/doctorDashboard/overView",
+        icon: LayoutGrid,
+    },
+    {
+        label: "Manage Schedule",
+        href: "/doctorDashboard/schedule",
+        icon: Building2,
+    },
+    {
+        label: "Appointment Requests",
+        href: "/doctorDashboard/requests", 
+        icon: FileText,
+    },
+    {
+      label: "Prescription Management",
+      href: "/doctorDashboard/prescription",
+      icon: Settings,
+    },
+    {
+      label: "Profile Management",
+      href: "/doctorDashboard/profile",
       icon: Settings,
     },
 ];
@@ -43,7 +70,8 @@ export default function Sidebar() {
 
     const { data: session } = authClient.useSession();
     const user = session?.user;
-    console.log(user);
+
+    const navItems = user?.role === "admin"? adminNavItems : user?.role === "doctor" ? doctorNavItems : patientNavItems;
 
     // Get the current pathname from Next.js navigation hook
     const pathname = usePathname();

@@ -22,7 +22,14 @@ export default function MainNavbar() {
     { label: "Find Doctors", href: "/nab/find-doctors" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
-    ...(session ? [{ label: "Dashboard", href: "/dashboard" }] : []),
+    ...(session ? [{ 
+      label: "Dashboard", 
+      href: session.user?.role === "admin" 
+        ? "/adminDashboard/overView" 
+        : session.user?.role === "doctor" 
+          ? "/doctorDashboard/overView" 
+          : "/patientDashboard/overView" 
+    }] : []),
   ];
 
   const handleSignOut = async () => {
