@@ -13,11 +13,25 @@ export const auth = betterAuth({
   },
   user: {
     additionalFields: {
-      role: { type: "string", required: true },
+      accountType: { type: "string", required: true },
       phone: { type: "string", required: true },
       gender: { type: "string", required: true },
       photo: { type: "string", required: false },
       status: { type: "string", required: true },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: (user) => {
+          return {
+            data: {
+              ...user,
+              role: user.accountType, // Map accountType to the protected role field
+            },
+          };
+        },
+      },
     },
   },
   plugins: [

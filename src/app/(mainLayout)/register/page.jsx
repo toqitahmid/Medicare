@@ -121,7 +121,7 @@ export default function RegisterPage() {
         email: email,
         password: password,
         name: name,
-        role: role,
+        accountType: role,
         phone: phone,
         gender: gender,
         photo: photo,
