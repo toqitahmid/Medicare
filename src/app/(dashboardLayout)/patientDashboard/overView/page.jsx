@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
-import { Avatar, Spinner } from "@heroui/react";
+import { Avatar, Spinner, Chip } from "@heroui/react";
 import { Clock, AlertCircle } from "lucide-react";
 import UpComming from "./UpComming";
 import Payments from "./Payments";
@@ -41,14 +41,31 @@ async function DashboardContent() {
     );
   }
 
+  if (status === "rejected") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <AlertCircle className="w-16 h-16 text-danger" />
+        <h2 className="text-2xl font-bold text-danger">Registration Rejected</h2>
+        <p className="text-default-500 max-w-md text-center">
+          Your account registration has been rejected. Please contact support if you believe this is a mistake.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div className="flex flex-col gap-1.5">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Welcome back, <span className="text-orange-500">{userName.split(' ')[0]}</span>! 👋
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Welcome back, <span className="text-orange-500">{userName.split(' ')[0]}</span>! 👋
+            </h1>
+            <Chip size="sm" color="success" variant="flat" className="font-semibold uppercase tracking-wider text-[10px]">
+              {status}
+            </Chip>
+          </div>
           <p className="text-default-500 text-sm font-medium">Here is your health overview for today.</p>
         </div>
         

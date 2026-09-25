@@ -119,12 +119,9 @@ export default function ManageUsers() {
                     status: "suspended"
                 }
             });
-            const { error } = await authClient.admin.banUser({
-                userId,
-                banReason: "Admin suspended account"
-            });
-            if (error || updateError) {
-                toast.error(error?.message || updateError?.message || "Failed to suspend user");
+            
+            if (updateError) {
+                toast.error(updateError?.message || "Failed to suspend user");
             } else {
                 toast.success("User suspended");
                 refreshUsers();
@@ -143,13 +140,13 @@ export default function ManageUsers() {
                     status: "approved"
                 }
             });
-            const { error } = await authClient.admin.unbanUser({
-                userId,
-            });
-            if (error || updateError) {
-                toast.error(error?.message || updateError?.message || "Failed to unban user");
+            // Just in case they were previously banned, we also attempt an unban.
+            await authClient.admin.unbanUser({ userId });
+
+            if (updateError) {
+                toast.error(updateError?.message || "Failed to unban user");
             } else {
-                toast.success("User unbanned");
+                toast.success("User unsuspended");
                 refreshUsers();
             }
         } catch (error) {
@@ -193,9 +190,9 @@ export default function ManageUsers() {
             case "actions":
                 return (
                     <div className="relative flex items-center justify-center gap-2">
-                        {user.banned ? (
+                        {user.banned || user.status === "suspended" ? (
                             <Button size="sm" color="primary" variant="flat" onPress={() => handleUnban(user.id || user._id)}>
-                                Unban
+                                Unsuspend
                             </Button>
                         ) : (
                             <>
