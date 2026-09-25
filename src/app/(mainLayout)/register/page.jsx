@@ -125,6 +125,7 @@ export default function RegisterPage() {
         phone: phone,
         gender: gender,
         photo: photo,
+        status: "pending",
         callbackURL: "/",
       };
 
