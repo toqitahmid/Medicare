@@ -92,10 +92,11 @@ export default function ProfileFormClient({ user, existingProfile }) {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="p-8 md:p-10 border border-default-100/50 bg-background/60 backdrop-blur-xl shadow-medium rounded-[2rem]">
+          <Card className="p-8 md:p-10 border border-default-100/50 bg-background/60 backdrop-blur-xl shadow-medium rounded-4xl">
             <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="w-32 h-32 shrink-0 rounded-[2rem] bg-primary/10 flex items-center justify-center overflow-hidden border-4 border-background shadow-lg">
+              <div className="w-32 h-32 shrink-0 rounded-4xl bg-primary/10 flex items-center justify-center overflow-hidden border-4 border-background shadow-lg">
                 {user?.photo ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={user.photo} alt={user?.name || "Doctor"} className="w-full h-full object-cover" />
                 ) : (
                   <User className="w-12 h-12 text-primary" />
@@ -218,7 +219,7 @@ export default function ProfileFormClient({ user, existingProfile }) {
   
         <form onSubmit={handleSubmit}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="p-8 border border-default-100/50 bg-background/60 backdrop-blur-xl shadow-medium rounded-[2rem]">
+            <Card className="p-8 border border-default-100/50 bg-background/60 backdrop-blur-xl shadow-medium rounded-4xl">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Details / Bio */}
                 <div className="md:col-span-2">
@@ -394,7 +395,7 @@ export default function ProfileFormClient({ user, existingProfile }) {
                   type="submit"
                   color="primary"
                   size="lg"
-                  className="font-bold rounded-[1rem] shadow-lg shadow-primary/30 px-8"
+                  className="font-bold rounded-2xl shadow-lg shadow-primary/30 px-8"
                   isLoading={isLoading}
                   startContent={!isLoading && <Save className="w-5 h-5" />}
                 >

@@ -33,7 +33,7 @@ const Specialization = () => {
               </h2>
             </div>
             <Link
-              href="/nab/find-doctors"
+              href="/doctors"
               className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
             >
               Explore all doctors
@@ -51,7 +51,7 @@ const Specialization = () => {
                 transition={{ duration: 0.4, delay: index * 0.06 }}
               >
                 <Link
-                  href={`/nab/find-doctors?specialization=${name}`}
+                  href={`/doctors?specialization=${name}`}
                   className="group flex items-center justify-between rounded-xl border border-divider bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_14px_28px_rgba(18,59,66,0.1)]"
                 >
                   <span className="flex items-center gap-3">

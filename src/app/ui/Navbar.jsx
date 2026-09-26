@@ -19,7 +19,7 @@ export default function MainNavbar() {
 
   const menuItems = [
     { label: "Home", href: "/" },
-    { label: "Find Doctors", href: "/nab/find-doctors" },
+    { label: "Find Doctors", href: "/doctors" },
     { label: "About Us", href: "/about-us" },
     { label: "Contact Us", href: "/contact-us" },
     ...(session ? [{ 

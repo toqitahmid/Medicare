@@ -54,7 +54,7 @@ const Banner = () => {
           </p>
           <div className="motion-reveal motion-delay-3 mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
-              href="/nab/find-doctors"
+              href="/doctors"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f2a38f] px-6 py-3 text-sm font-semibold text-[#123b42] shadow-lg shadow-black/10 transition-transform hover:-translate-y-1"
             >
               Find your doctor
