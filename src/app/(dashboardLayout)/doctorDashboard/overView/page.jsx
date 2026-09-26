@@ -1,9 +1,11 @@
 import React, { Suspense } from "react";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
-import { Spinner } from "@heroui/react";
+import { Spinner, Button } from "@heroui/react";
 import { Clock, AlertCircle } from "lucide-react";
 import DoctorOverviewClient from "./DoctorOverviewClient";
+import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
+import Link from "next/link";
 
 async function DashboardContent() {
   const session = await auth.api.getSession({
@@ -45,6 +47,25 @@ async function DashboardContent() {
         <p className="text-default-500 max-w-md text-center">
           Your account registration has been rejected. Please contact support if you believe this is a mistake.
         </p>
+      </div>
+    );
+  }
+
+  const profileResponse = await getDoctorProfile(session?.user?.email);
+  
+  if (!profileResponse?.data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <AlertCircle className="w-16 h-16 text-warning" />
+        <h2 className="text-2xl font-bold text-foreground">Profile Incomplete</h2>
+        <p className="text-default-500 max-w-md text-center mb-2">
+          Please complete your medical profile with your qualifications, experience, and availability to fully access your dashboard.
+        </p>
+        <Link href="/doctorDashboard/profile">
+          <Button color="primary" variant="shadow" className="font-semibold border-2 px-5 py-2 rounded-2xl cursor-pointer bg-emerald-400">
+            Complete Profile Now
+          </Button>
+        </Link>
       </div>
     );
   }
