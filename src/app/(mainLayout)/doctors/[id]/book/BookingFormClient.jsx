@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Card, Button, Input } from "@heroui/react";
+import { Card, Button } from "@heroui/react";
 import { Calendar as CalendarIcon, Clock, Activity, Send, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { createAppointment } from "@/app/lib/actions/appointment.actions";
@@ -44,7 +44,7 @@ export default function BookingFormClient({ doctor, user }) {
     if (res.success) {
       setIsSuccess(true);
       setTimeout(() => {
-        router.push("/dashboard"); // Or wherever the user appointments list is
+        router.push("/patientDashboard/appointments");
       }, 3000);
     } else {
       alert("Something went wrong booking your appointment. Ensure backend is running!");
@@ -62,8 +62,8 @@ export default function BookingFormClient({ doctor, user }) {
           <p className="text-default-600 text-lg mb-8">
             Your appointment with <span className="font-bold">Dr. {doctor.name}</span> on <span className="font-bold">{formData.appointmentDate}</span> at <span className="font-bold">{formData.appointmentTime}</span> has been requested successfully. 
           </p>
-          <Button color="success" variant="flat" onPress={() => router.push("/")} size="lg" className="font-bold">
-            Return to Home
+          <Button color="success" variant="flat" onPress={() => router.push("/patientDashboard/appointments")} size="lg" className="font-bold">
+            View My Appointments
           </Button>
         </Card>
       </motion.div>
@@ -118,15 +118,13 @@ export default function BookingFormClient({ doctor, user }) {
                   <label className="text-sm font-bold flex items-center gap-2 text-default-500 mb-3 uppercase tracking-wider">
                     <CalendarIcon className="w-4 h-4" /> Select Date
                   </label>
-                  <Input
+                  <input
                     type="date"
                     name="appointmentDate"
                     value={formData.appointmentDate}
                     onChange={handleChange}
-                    size="lg"
-                    radius="lg"
-                    isRequired
-                    classNames={{ inputWrapper: "bg-default-100/50 border-default-200" }}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
                   />
                 </div>
 
@@ -182,7 +180,7 @@ export default function BookingFormClient({ doctor, user }) {
                   isLoading={isLoading}
                   endContent={!isLoading && <Send className="w-5 h-5" />}
                 >
-                  Confirm Booking (${doctor.consultationFee})
+                  Confirm Booking
                 </Button>
                 <p className="text-xs text-center text-default-400 mt-4 font-medium">Payment status will be recorded as Unpaid. You can pay at the clinic.</p>
               </div>

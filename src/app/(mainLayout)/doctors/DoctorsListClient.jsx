@@ -95,7 +95,7 @@ export default function DoctorsListClient({ doctors, initialSpecialization = "" 
                 </div>
 
                 <div className="mt-8">
-                  <Link href={`/doctors/${doctor._id}`}>
+                  <Link href={`/doctors/${doctor.email}`}>
                     <Button
                       color="primary"
                       variant="solid"

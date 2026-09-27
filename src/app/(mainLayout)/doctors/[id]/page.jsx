@@ -1,5 +1,5 @@
 import React from "react";
-import { getAllDoctors } from "@/app/lib/actions/doctors.actions";
+import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
 import { Briefcase, Clock, Award, Building, DollarSign, Calendar, Mail, ArrowLeft, CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,20 +7,18 @@ import { Button } from "@heroui/react";
 import { Card } from "@heroui/react";
 
 export async function generateMetadata({ params }) {
-  const { id } = await params;
-  const response = await getAllDoctors();
-  const doctors = response?.success ? response.data : [];
-  const doctor = doctors.find((doc) => doc._id === id);
+  const { id: email } = await params;
+  const response = await getDoctorProfile(decodeURIComponent(email));
+  const doctor = response?.success ? response.data : null;
 
   if (!doctor) return { title: "Doctor Not Found" };
   return { title: `Dr. ${doctor.name} | Medicare` };
 }
 
 export default async function DoctorDetailsPage({ params }) {
-  const { id } = await params;
-  const response = await getAllDoctors();
-  const doctors = response?.success ? response.data : [];
-  const doctor = doctors.find((doc) => doc._id === id);
+  const { id: email } = await params;
+  const response = await getDoctorProfile(decodeURIComponent(email));
+  const doctor = response?.success ? response.data : null;
 
   if (!doctor) {
     notFound();
@@ -50,7 +48,7 @@ export default async function DoctorDetailsPage({ params }) {
             </p>
             
             <div className="w-full flex flex-col gap-4 mt-2">
-              <Link href={`/doctors/${doctor._id}/book`} className="w-full">
+              <Link href={`/doctors/${doctor.email}/book`} className="w-full">
                 <Button color="primary" size="lg" className="w-full font-bold shadow-lg shadow-primary/30 rounded-xl py-6" startContent={<CalendarPlus className="w-5 h-5" />}>
                   Book Appointment
                 </Button>
