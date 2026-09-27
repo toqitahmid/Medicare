@@ -50,9 +50,11 @@ export default async function DoctorDetailsPage({ params }) {
             </p>
             
             <div className="w-full flex flex-col gap-4 mt-2">
-              <Button color="primary" size="lg" className="w-full font-bold shadow-lg shadow-primary/30 rounded-xl py-6" startContent={<CalendarPlus className="w-5 h-5" />}>
-                Book Appointment
-              </Button>
+              <Link href={`/doctors/${doctor._id}/book`} className="w-full">
+                <Button color="primary" size="lg" className="w-full font-bold shadow-lg shadow-primary/30 rounded-xl py-6" startContent={<CalendarPlus className="w-5 h-5" />}>
+                  Book Appointment
+                </Button>
+              </Link>
               <Button color="default" variant="flat" size="lg" className="w-full font-bold rounded-xl py-6" startContent={<Mail className="w-5 h-5" />}>
                 Message Doctor
               </Button>
