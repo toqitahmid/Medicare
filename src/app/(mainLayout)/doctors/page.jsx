@@ -1,5 +1,5 @@
 import React from "react";
-import { getAllDoctors } from "@/app/lib/actions/doctors.actions";
+import { getAllDoctors } from "@/app/lib/api/doctors";
 import DoctorsListClient from "./DoctorsListClient";
 
 export const metadata = {

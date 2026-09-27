@@ -2,7 +2,7 @@ import React from "react";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
 import ProfileFormClient from "./ProfileFormClient";
-import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
+import { getDoctorProfile } from "@/app/lib/api/doctors";
 
 export default async function DoctorProfile() {
   const session = await auth.api.getSession({

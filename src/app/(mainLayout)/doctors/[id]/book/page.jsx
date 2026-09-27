@@ -1,5 +1,5 @@
 import React from "react";
-import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
+import { getDoctorProfile } from "@/app/lib/api/doctors";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";

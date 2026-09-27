@@ -1,5 +1,5 @@
 import React from "react";
-import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
+import { getDoctorProfile } from "@/app/lib/api/doctors";
 import { Briefcase, Clock, Award, Building, DollarSign, Calendar, Mail, ArrowLeft, CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";

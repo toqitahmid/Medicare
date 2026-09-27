@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { Spinner, Button } from "@heroui/react";
 import { Clock, AlertCircle } from "lucide-react";
 import DoctorOverviewClient from "./DoctorOverviewClient";
-import { getDoctorProfile } from "@/app/lib/actions/doctors.actions";
+import { getDoctorProfile } from "@/app/lib/api/doctors";
 import Link from "next/link";
 
 async function DashboardContent() {
