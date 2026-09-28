@@ -38,3 +38,21 @@ export const getDoctorProfile = async (email) => {
         return { success: false, message: error.message };
     }
 };
+
+export const getDoctorOverview = async (docId) => {
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/doctor-overview/${docId}/overview`, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch doctor overview");
+        }
+
+        const res = await response.json();
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error("Error fetching doctor overview:", error);
+        return { success: false, message: error.message };
+    }
+};

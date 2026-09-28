@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { Spinner, Button } from "@heroui/react";
 import { Clock, AlertCircle } from "lucide-react";
 import DoctorOverviewClient from "./DoctorOverviewClient";
-import { getDoctorProfile } from "@/app/lib/api/doctors";
+import { getDoctorProfile, getDoctorOverview } from "@/app/lib/api/doctors";
 import Link from "next/link";
 
 async function DashboardContent() {
@@ -70,7 +70,22 @@ async function DashboardContent() {
     );
   }
 
-  return <DoctorOverviewClient userName={userName} status={status} />;
+  let overviewData = {
+    appointments: [],
+    payments: [],
+    reviews: [],
+    totalPatients: 0,
+    revenueMonth: 0,
+    totalRevenue: 0,
+    averageRating: 0
+  };
+
+  const overviewRes = await getDoctorOverview(session?.user?.email);
+  if (overviewRes?.success && overviewRes?.data) {
+    overviewData = overviewRes.data;
+  }
+
+  return <DoctorOverviewClient userName={userName} status={status} overviewData={overviewData} />;
 }
 
 export default function DoctorOverview() {
