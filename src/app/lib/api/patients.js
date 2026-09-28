@@ -6,7 +6,12 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
 
 export const getPatientProfile = async (email) => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
@@ -32,7 +37,12 @@ export const getPatientProfile = async (email) => {
 
 export const getPatientOverview = async (email) => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {

@@ -5,7 +5,12 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getPaymentsByPatientId = async (patientId) => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
@@ -30,7 +35,12 @@ export const getPaymentsByPatientId = async (patientId) => {
 
 export const getPaymentsByDoctorId = async (doctorId) => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
@@ -55,7 +65,12 @@ export const getPaymentsByDoctorId = async (doctorId) => {
 
 export const getAllPayments = async () => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {

@@ -5,7 +5,12 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const getAllDoctors = async () => {
     try {
         // Adding cache: "no-store" to ensure we get the latest list of doctors
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
@@ -31,7 +36,12 @@ export const getAllDoctors = async () => {
 export const getDoctorProfile = async (email) => {
     try {
         // Adding cache: "no-store" to ensure we get the latest profile data
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
@@ -57,7 +67,12 @@ export const getDoctorProfile = async (email) => {
 
 export const getDoctorOverview = async (docId) => {
     try {
-        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        let tokenRes;
+        try {
+            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        } catch (e) {
+            tokenRes = null;
+        }
         const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         const reqHeaders = {};
         if (token) {
