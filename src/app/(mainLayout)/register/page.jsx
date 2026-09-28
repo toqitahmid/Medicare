@@ -192,7 +192,7 @@ export default function RegisterPage() {
             value={name}
             onChange={handleNameChange}
             isInvalid={Boolean(errors.name)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
@@ -218,7 +218,7 @@ export default function RegisterPage() {
             value={email}
             onChange={handleEmailChange}
             isInvalid={Boolean(errors.email)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
@@ -244,7 +244,7 @@ export default function RegisterPage() {
             value={password}
             onChange={handlePasswordChange}
             isInvalid={Boolean(errors.password)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
@@ -283,7 +283,7 @@ export default function RegisterPage() {
             value={phone}
             onChange={handlePhoneChange}
             isInvalid={Boolean(errors.phone)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">

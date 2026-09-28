@@ -74,17 +74,20 @@ const WhyChoose = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
-              className="group rounded-xl border border-divider bg-default-50/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_14px_28px_rgba(18,59,66,0.08)]"
+              className="group rounded-2xl border border-divider/50 bg-background/60 backdrop-blur-md p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_20px_40px_rgba(18,59,66,0.08)] relative overflow-hidden"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform duration-300 group-hover:rotate-6">
-                <Icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-5 text-lg font-semibold text-foreground">
-                {title}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-default-600">
-                {description}
-              </p>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="relative z-10">
+                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:bg-primary/20 group-hover:shadow-lg group-hover:shadow-primary/20">
+                  <Icon className="h-6 w-6" />
+                </span>
+                <h3 className="mt-5 text-xl font-semibold text-foreground transition-colors group-hover:text-primary">
+                  {title}
+                </h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-default-600">
+                  {description}
+                </p>
+              </div>
             </motion.article>
           ))}
         </div>

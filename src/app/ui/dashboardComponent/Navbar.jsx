@@ -11,25 +11,25 @@ const Navbar = () => {
     const user = session?.user;
 
     return (
-        <header className="w-full h-16 bg-content1/50 backdrop-blur-md border-b border-divider flex items-center justify-end px-6 sticky top-0 z-40 shadow-sm">
+        <header className="w-full h-16 bg-background/70 backdrop-blur-2xl saturate-150 border-b border-divider/50 flex items-center justify-end px-6 sticky top-0 z-40 shadow-sm">
             <div className="flex items-center gap-4">
                 <Link 
                     href="/" 
-                    className="flex items-center justify-center w-10 h-10 bg-default-100 hover:bg-default-200 text-default-600 hover:text-foreground transition-all rounded-xl"
+                    className="flex items-center justify-center w-10 h-10 bg-default-100/50 hover:bg-primary/10 text-default-500 hover:text-primary transition-all duration-300 rounded-xl hover:shadow-sm"
                     aria-label="Home"
                 >
                     <Home className="w-4 h-4" />
                 </Link>
 
-                <div className="relative">
-                    <Avatar>
+                <div className="relative group cursor-pointer transition-transform duration-300 hover:scale-105">
+                    <Avatar className="shadow-sm">
                         <Avatar.Image
                             src={user?.photo}
                             alt={user?.name || "User Avatar"}
                             className="size-10 rounded-full"
                         />
                     </Avatar>
-                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-700 border-2 border-content1 rounded-full"></div>
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-background rounded-full shadow-[0_0_6px_rgba(34,197,94,0.5)]"></div>
                 </div>
             </div>
         </header>

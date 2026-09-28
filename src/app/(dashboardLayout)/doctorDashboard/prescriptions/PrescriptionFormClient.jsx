@@ -198,11 +198,8 @@ export default function PrescriptionFormClient({ appointments }) {
                       variant="faded"
                       size="lg"
                       radius="lg"
-                      isRequired
-                      classNames={{
-                        input: "text-base font-medium",
-                        inputWrapper: "bg-default-50 hover:bg-default-100 border-default-200 focus-within:!border-primary shadow-sm"
-                      }}
+                      required
+                      className="text-base font-medium bg-default-50 hover:bg-default-100 border-default-200 focus-within:!border-primary shadow-sm"
                       value={prescriptionData.diagnosis}
                       onChange={(e) => setPrescriptionData({...prescriptionData, diagnosis: e.target.value})}
                     />

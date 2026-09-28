@@ -52,17 +52,17 @@ const Specialization = () => {
               >
                 <Link
                   href={`/doctors?specialization=${name}`}
-                  className="group flex items-center justify-between rounded-xl border border-divider bg-background p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary hover:shadow-[0_14px_28px_rgba(18,59,66,0.1)]"
+                  className="group flex items-center justify-between rounded-2xl border border-divider/50 bg-background/60 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_20px_40px_rgba(18,59,66,0.08)]"
                 >
-                  <span className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center bg-primary/10 text-primary">
-                      <Icon className="h-5 w-5" />
+                  <span className="flex items-center gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20">
+                      <Icon className="h-6 w-6" />
                     </span>
-                    <span className="text-sm font-semibold text-foreground">
+                    <span className="text-[15px] font-bold text-foreground group-hover:text-primary transition-colors">
                       {name}
                     </span>
                   </span>
-                  <ArrowRight className="h-4 w-4 text-default-400 transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                  <ArrowRight className="h-5 w-5 text-default-300 transition-all duration-300 group-hover:translate-x-1.5 group-hover:text-primary" />
                 </Link>
               </motion.div>
             ))}

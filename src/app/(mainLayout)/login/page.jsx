@@ -112,7 +112,7 @@ export default function LoginPage() {
             value={formData.email}
             onChange={handleChange("email")}
             isInvalid={Boolean(errors.email)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">
@@ -138,7 +138,7 @@ export default function LoginPage() {
             value={formData.password}
             onChange={handleChange("password")}
             isInvalid={Boolean(errors.password)}
-            isRequired
+            required
             className="flex flex-col gap-1.5"
           >
             <Label className="text-xs font-semibold uppercase tracking-wider text-default-600">

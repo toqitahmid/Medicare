@@ -27,7 +27,7 @@ const Banner = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.55, ease: "easeOut" }}
-        className="relative rounded-2xl mt-4 min-h-[min(82vh,820px)] w-full overflow-hidden bg-[#123b42] text-white shadow-[0_24px_70px_rgba(12,34,40,0.18)]"
+        className="relative rounded-2xl mt-4 min-h-[500px] md:min-h-[min(82vh,820px)] w-full overflow-hidden bg-[#123b42] text-white shadow-[0_24px_70px_rgba(12,34,40,0.18)] border border-white/10"
       >
         <Image
           src="/assets/banner.jpg"
@@ -40,29 +40,29 @@ const Banner = () => {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,39,45,0.94)_0%,rgba(6,39,45,0.78)_38%,rgba(6,39,45,0.26)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-52 bg-gradient-to-t from-[#06272d]/70 to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[min(82vh,820px)] w-full max-w-none flex-col justify-end px-5 pb-12 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 lg:pt-32">
-          <p className="motion-reveal mb-5 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">
+        <div className="relative mx-auto flex min-h-[500px] md:min-h-[min(82vh,820px)] w-full max-w-none flex-col justify-end px-5 pb-12 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 lg:pt-32">
+          <p className="motion-reveal mb-5 flex items-center gap-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-cyan-200">
             <span className="h-px w-10 bg-cyan-200" />
             Your health, our purpose
           </p>
-          <h1 className="motion-reveal motion-delay-1 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight sm:text-6xl lg:text-8xl">
+          <h1 className="motion-reveal motion-delay-1 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-8xl">
             Care that moves with you.
           </h1>
           <p className="motion-reveal motion-delay-2 mt-6 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
             Medicare brings trusted doctors, clear choices, and meaningful
             support into one calm place for every step of your care.
           </p>
-          <div className="motion-reveal motion-delay-3 mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="motion-reveal motion-delay-3 mt-8 flex flex-col gap-4 sm:flex-row">
             <Link
               href="/doctors"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f2a38f] px-6 py-3 text-sm font-semibold text-[#123b42] shadow-lg shadow-black/10 transition-transform hover:-translate-y-1"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#f2a38f] to-[#f5b8a9] px-7 py-3.5 text-sm font-bold text-[#123b42] shadow-xl shadow-black/20 transition-all duration-300 hover:shadow-[#f2a38f]/40 hover:-translate-y-1 active:translate-y-0"
             >
               Find your doctor
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               href="/register"
-              className="inline-flex items-center justify-center rounded-full border border-white/50 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              className="inline-flex items-center justify-center rounded-full border border-white/30 bg-white/5 backdrop-blur-md px-7 py-3.5 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/60 hover:-translate-y-1 active:translate-y-0"
             >
               Join Medicare
             </Link>
@@ -93,10 +93,12 @@ const Banner = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="flex items-center gap-3 border-t border-divider pt-4 text-sm font-medium text-default-600 transition-colors hover:text-primary"
+              className="group flex items-center gap-4 border-t border-divider pt-5 text-sm font-medium text-default-600 transition-colors"
             >
-              <Icon className="h-5 w-5 shrink-0 text-primary" />
-              {label}
+              <span className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20">
+                <Icon className="h-5 w-5 shrink-0 text-primary" />
+              </span>
+              <span className="text-foreground/90 transition-colors group-hover:text-primary">{label}</span>
             </motion.div>
           ))}
         </div>

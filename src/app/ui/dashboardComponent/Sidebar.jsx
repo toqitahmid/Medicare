@@ -3,7 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Drawer, Button, Avatar } from "@heroui/react";
+import { Button, Avatar } from "@heroui/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
     LayoutGrid,
@@ -98,6 +99,8 @@ const adminNavItems = [
 ];
 
 export default function Sidebar() {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const onOpenChange = (open) => setIsOpen(open);
 
     const { data: session } = authClient.useSession();
     const user = session?.user;
@@ -122,23 +125,24 @@ export default function Sidebar() {
                     <Link
                         key={item.label}
                         href={item.href}
-                        className={`flex items-center justify-between w-full py-4 px-6 transition-all duration-200 group relative ${isActive
-                            ? "bg-default-200 text-foreground  border-2 rounded-2xl"
-                            : "text-default-500 hover:text-foreground"
+                        onClick={() => onOpenChange(false)}
+                        className={`flex items-center justify-between w-[calc(100%-16px)] mx-2 py-3 px-4 rounded-xl transition-all duration-300 group relative ${isActive
+                            ? "bg-primary/10 text-primary font-semibold shadow-sm"
+                            : "text-default-500 hover:bg-default-100/50 hover:text-foreground"
                             }`}
                     >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
                             <item.icon
-                                className={`w-5 h-5 ${isActive ? "text-foreground border-b-2" : "text-default-500 group-hover:text-foreground"}`}
+                                className={`w-5 h-5 transition-transform duration-300 ${isActive ? "text-primary" : "text-default-400 group-hover:scale-110 group-hover:text-foreground"}`}
                             />
-                            <span className="text-[15px] font-medium tracking-wide">
+                            <span className="text-[14px] tracking-wide">
                                 {item.label}
                             </span>
                         </div>
 
-                        {/* The vertical line indicator on the right side for the active tab */}
+                        {/* Active indicator */}
                         {isActive && (
-                            <div className="absolute right-0 top-0 bottom-0 w-[3px] bg-primary h-full" />
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 bg-primary h-1/2 rounded-r-md shadow-sm" />
                         )}
                     </Link>
                 );
@@ -152,22 +156,21 @@ export default function Sidebar() {
             {/* Brand / Logo Section */}
             <Link
                 href="/"
-                className="flex items-center gap-1 text-2xl font-black tracking-tight text-blue-500 hover:opacity-90 transition-opacity mb-5"
+                className="flex items-center gap-2.5 text-2xl font-black tracking-tight text-foreground hover:opacity-90 transition-opacity mb-5"
             >
-                <div className="flex -space-x-1 mr-1">
-                    
-                    <div className="w-4 h-4 rounded-full border-2 border-blue-500 flex items-center justify-center z-0 bg-background">
-                        <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-                    </div>
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-primary to-primary-500 font-bold text-lg text-primary-foreground shadow-md shadow-primary/30">
+                    +
                 </div>
-                Medi<span className="text-orange-500">care</span>
+                <span>
+                    Medi<span className="text-primary">Care</span>
+                </span>
             </Link>
 
             {/* User Card Layout */}
             <div className="flex flex-col items-start mb-6">
                 
                 {/* Premium Account Badge */}
-                <span className="text-[10px] font-bold tracking-wider text-default-600 bg-default-100 border border-divider px-2 py-1 rounded-sm uppercase">
+                <span className="text-[10px] font-bold tracking-wider text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-full uppercase shadow-sm">
                     {user?.role} Account
                 </span>
             </div>
@@ -179,7 +182,7 @@ export default function Sidebar() {
             {/* ========================================================= */}
             {/* 1. DESKTOP SIDEBAR (Visible on md screens and up)        */}
             {/* ========================================================= */}
-            <aside className="hidden md:flex flex-col w-70 h-screen bg-content1 text-foreground sticky top-0 border-r border-divider">
+            <aside className="hidden md:flex flex-col w-[280px] shrink-0 h-screen bg-content1 text-foreground sticky top-0 border-r border-divider">
                 {renderHeaderAndUser()}
                 <div className="mt-4 flex-1">{renderNavLinks()}</div>
             </aside>
@@ -188,42 +191,55 @@ export default function Sidebar() {
             {/* 2. MOBILE DRAWER (Visible on screens below md)            */}
             {/* ========================================================= */}
             <div className="md:hidden">
-                <Drawer>
-                    {/* Mobile floating trigger button */}
-                    <Button
-                        isIconOnly
-                        variant="light"
-                        className="fixed top-4 left-4 z-50 text-foreground bg-content1 border border-divider shadow-xl"
-                    >
-                        <Menu className="w-5 h-5" />
-                    </Button>
+                {/* Mobile floating trigger button */}
+                <Button
+                    isIconOnly
+                    variant="light"
+                    className="fixed top-4 left-4 z-50 text-foreground bg-content1 border border-divider shadow-xl"
+                    onClick={() => setIsOpen(true)}
+                >
+                    <Menu className="w-5 h-5" />
+                </Button>
 
-                    <Drawer.Backdrop variant="blur">
-                        <Drawer.Content
-                            placement="left"
-                            className="w-64 bg-content1 text-foreground p-0"
-                        >
-                            <Drawer.Dialog className="h-full flex flex-col pt-4 relative">
-                                {/* Close Trigger Button for Mobile Panel */}
-                                <Drawer.CloseTrigger>
-                                    <div
-                                        role="button"
-                                        aria-label="Close drawer"
-                                        className="absolute top-4 right-4 text-default-500 hover:text-foreground"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </div>
-                                </Drawer.CloseTrigger>
+                <AnimatePresence>
+                    {isOpen && (
+                        <>
+                            {/* Backdrop */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsOpen(false)}
+                                className="fixed inset-0 z-[60] bg-background/60 backdrop-blur-md"
+                            />
+
+                            {/* Drawer Content */}
+                            <motion.div
+                                initial={{ x: "-100%" }}
+                                animate={{ x: 0 }}
+                                exit={{ x: "-100%" }}
+                                transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+                                className="fixed top-0 left-0 bottom-0 z-[70] w-[280px] bg-content1 shadow-2xl flex flex-col pt-4 border-r border-divider"
+                            >
+                                {/* Close Button */}
+                                <Button
+                                    isIconOnly
+                                    variant="light"
+                                    onClick={() => setIsOpen(false)}
+                                    className="absolute top-4 right-4 text-default-500 hover:text-foreground z-50"
+                                >
+                                    <X className="w-5 h-5" />
+                                </Button>
 
                                 {renderHeaderAndUser()}
 
-                                <Drawer.Body className="flex-1 px-0 mt-4 overflow-y-auto">
+                                <div className="flex-1 px-0 mt-4 overflow-y-auto pb-6">
                                     {renderNavLinks()}
-                                </Drawer.Body>
-                            </Drawer.Dialog>
-                        </Drawer.Content>
-                    </Drawer.Backdrop>
-                </Drawer>
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
             </div>
         </>
     );
