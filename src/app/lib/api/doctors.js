@@ -1,10 +1,19 @@
 "use server";
+import { authClient } from "../auth-client";
+import { headers } from "next/headers";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const getAllDoctors = async () => {
     try {
         // Adding cache: "no-store" to ensure we get the latest list of doctors
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/doctors/all`, {
-            cache: "no-store"
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {
@@ -22,8 +31,15 @@ export const getAllDoctors = async () => {
 export const getDoctorProfile = async (email) => {
     try {
         // Adding cache: "no-store" to ensure we get the latest profile data
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/doctors/${email}`, {
-            cache: "no-store"
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {
@@ -41,8 +57,15 @@ export const getDoctorProfile = async (email) => {
 
 export const getDoctorOverview = async (docId) => {
     try {
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/doctor-overview/${docId}/overview`, {
-            cache: "no-store"
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {

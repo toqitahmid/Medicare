@@ -1,10 +1,19 @@
 "use server";
+import { authClient } from "../auth-client";
+import { headers } from "next/headers";
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getAppointmentsByPaitentId = async (patientId) => {
     try {
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/${patientId}`, {
-            cache: 'no-store'
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {
@@ -21,8 +30,15 @@ export const getAppointmentsByPaitentId = async (patientId) => {
 
 export const getAppointmentsByDoctorId = async (doctorId) => {
     try {
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/doctor/${doctorId}`, {
-            cache: 'no-store'
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {
@@ -39,8 +55,15 @@ export const getAppointmentsByDoctorId = async (doctorId) => {
 
 export const getAllAppointments = async () => {
     try {
+        const tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
+        const reqHeaders = {};
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/all`, {
-            cache: 'no-store'
+            cache: "no-store",
+            headers: reqHeaders
         });
 
         if (!response.ok) {

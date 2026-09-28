@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
-import { admin } from "better-auth/plugins";
+import { admin, jwt } from "better-auth/plugins";
 
 const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("medicare");
@@ -35,6 +35,17 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    admin()
+    admin(),
+    jwt({
+      jwt: {
+        definePayload: ({ user }) => {
+          return {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+          };
+        },
+      },
+    }),
   ],
 });

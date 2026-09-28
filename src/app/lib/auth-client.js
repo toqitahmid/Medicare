@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react"
-import { inferAdditionalFields, adminClient } from "better-auth/client/plugins"
+import { inferAdditionalFields, adminClient, jwtClient } from "better-auth/client/plugins"
 
 export const authClient = createAuthClient({
   /** The base URL of the server (optional if you're using the same domain) */
@@ -14,6 +14,7 @@ export const authClient = createAuthClient({
         status: { type: "string", required: true },
       },
     }),
-    adminClient()
+    adminClient(),
+    jwtClient()
   ],
 })
