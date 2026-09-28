@@ -36,3 +36,21 @@ export const getAppointmentsByDoctorId = async (doctorId) => {
         return {success: false, message: err.message}
     }
 }
+
+export const getAllAppointments = async () => {
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/appointments/all`, {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch all appointments")
+        }
+        const res = await response.json();
+        return {success: true, data: res.data.appointments}
+    }
+    catch (err) {
+        console.error("Failed to fetch all appointments", err)
+        return {success: false, message: err.message}
+    }
+}
