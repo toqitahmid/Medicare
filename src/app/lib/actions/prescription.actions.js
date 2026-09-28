@@ -23,3 +23,24 @@ export const createPrescription = async (payload) => {
         return { success: false, message: error.message };
     }
 };
+
+export const getPrescriptionsByPatientId = async (patientId) => {
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const response = await fetch(`${baseUrl}/api/v1/prescriptions/patient/${patientId}`, {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch prescriptions");
+        }
+
+        const json = await response.json();
+        // Handle cases where the backend wraps the array in a 'prescriptions' object
+        const prescriptionsArray = json.data?.prescriptions || json.data || [];
+        return { success: true, data: prescriptionsArray };
+    } catch (error) {
+        console.error("Fetch prescriptions error:", error);
+        return { success: false, message: error.message };
+    }
+};

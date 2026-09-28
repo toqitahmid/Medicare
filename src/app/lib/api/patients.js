@@ -1,0 +1,22 @@
+"use server";
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+
+export const getPatientProfile = async (email) => {
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/patients/${email}`, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) return { success: true, data: null }; // Profile doesn't exist yet
+            throw new Error("Failed to fetch patient profile");
+        }
+
+        const res = await response.json();
+        return { success: true, data: res.data.patient || res.data };
+    } catch (error) {
+        console.error("Error fetching patient profile:", error);
+        return { success: false, message: error.message };
+    }
+};
