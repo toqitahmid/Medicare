@@ -1,34 +1,47 @@
 import React from "react";
 import OverviewClient from "./OverviewClient";
+import { getAdminOverview } from "@/app/lib/api/admin";
 
-export default function AdminOverviewDashboard() {
-  // Mock dashboard data that would typically be fetched server-side from a database
-  const dashboardData = {
-    totalPatients: "14,250",
-    totalDoctors: "128",
-    totalAppointments: "4,320",
-    avgRating: "4.8",
-    appointmentsChart: [
-      { name: "Jan", appointments: 300 },
-      { name: "Feb", appointments: 450 },
-      { name: "Mar", appointments: 400 },
-      { name: "Apr", appointments: 600 },
-      { name: "May", appointments: 550 },
-      { name: "Jun", appointments: 800 },
-      { name: "Jul", appointments: 750 },
-      { name: "Aug", appointments: 900 },
-      { name: "Sep", appointments: 850 },
-      { name: "Oct", appointments: 1100 },
-      { name: "Nov", appointments: 1050 },
-      { name: "Dec", appointments: 1250 },
-    ],
-    topDoctors: [
-      { name: "Dr. Mark Wilson", rating: 4.9 },
-      { name: "Dr. Emily Chen", rating: 4.8 },
-      { name: "Dr. Sarah Jenkins", rating: 4.8 },
-      { name: "Dr. Michael Chang", rating: 4.7 },
-    ]
+export default async function AdminOverviewDashboard() {
+  const res = await getAdminOverview();
+  
+  let dashboardData = {
+    totalPatients: "0",
+    totalDoctors: "0",
+    totalAppointments: "0",
+    avgRating: "0.0",
+    appointmentsChart: [],
+    topDoctors: []
   };
+
+  if (res?.success && res?.data) {
+    const {
+      totalPatients,
+      totalDoctors,
+      totalAppointments,
+      avgDoctorRating,
+      appointmentsOverTime,
+      topRatedDoctors
+    } = res.data;
+
+    dashboardData = {
+      totalPatients: totalPatients?.toLocaleString() || "0",
+      totalDoctors: totalDoctors?.toLocaleString() || "0",
+      totalAppointments: totalAppointments?.toLocaleString() || "0",
+      avgRating: avgDoctorRating?.toString() || "0.0",
+      appointmentsChart: (appointmentsOverTime || []).map(item => ({
+        name: item.month,
+        appointments: item.count
+      })),
+      topDoctors: (topRatedDoctors || []).map(doc => {
+        const doctorName = doc.name || "Unknown Doctor";
+        return {
+          name: doctorName.includes("Dr.") ? doctorName : `Dr. ${doctorName}`,
+          rating: doc.averageRating || 0
+        };
+      })
+    };
+  }
 
   return <OverviewClient data={dashboardData} />;
 }
