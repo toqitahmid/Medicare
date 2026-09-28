@@ -18,3 +18,21 @@ export const getPaymentsByPatientId = async (patientId) => {
         return {success: false, message: err.message}
     }
 }
+
+export const getPaymentsByDoctorId = async (doctorId) => {
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/payments/doctor/${doctorId}`, {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch payments by doctor id")
+        }
+        const res = await response.json();
+        return {success: true, data: res.data.payments}
+    }
+    catch (err) {
+        console.error("Failed to fetch doctor payments", err)
+        return {success: false, message: err.message}
+    }
+}

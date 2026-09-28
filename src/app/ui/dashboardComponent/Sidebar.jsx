@@ -49,11 +49,6 @@ const doctorNavItems = [
         icon: LayoutGrid,
     },
     {
-        label: "Manage Schedule",
-        href: "/doctorDashboard/schedule",
-        icon: Clock,
-    },
-    {
         label: "Appointment Requests",
         href: "/doctorDashboard/appointments",
         icon: ClipboardList,
@@ -67,6 +62,11 @@ const doctorNavItems = [
         label: "Profile Management",
         href: "/doctorDashboard/profile",
         icon: UserCog,
+    },
+    {
+        label: "My Payments",
+        href: "/doctorDashboard/payment",
+        icon: Clock,
     },
 ];
 const adminNavItems = [
@@ -165,26 +165,7 @@ export default function Sidebar() {
 
             {/* User Card Layout */}
             <div className="flex flex-col items-start mb-6">
-                <div className="flex items-center gap-3 mb-2">
-                    <Avatar className="w-11 h-11 border border-divider" radius="sm">
-                        {user?.photo ? (
-                            <Avatar.Image
-                                src={user.photo}
-                                alt={user.name || "User Avatar"}
-                                className="object-cover"
-                            />
-                        ) : (
-                            <Avatar.Fallback>
-                                {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
-                            </Avatar.Fallback>
-                        )}
-                    </Avatar>
-                    <div>
-                        <h2 className="text-sm font-semibold text-foreground tracking-wide">
-                            {user?.name}
-                        </h2>
-                    </div>
-                </div>
+                
                 {/* Premium Account Badge */}
                 <span className="text-[10px] font-bold tracking-wider text-default-600 bg-default-100 border border-divider px-2 py-1 rounded-sm uppercase">
                     {user?.role} Account
