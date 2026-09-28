@@ -1,10 +1,14 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Chip, Button } from "@heroui/react";
-import { Calendar, Clock, Activity, FileText, CheckCircle2, CreditCard } from "lucide-react";
+import { Calendar, Clock, Activity, FileText, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { createStripeSession } from "@/app/lib/actions/payment.actions";
+import { toast } from "react-toastify";
 
 export default function PatientAppointmentsClient({ appointments }) {
+  const [loadingAptId, setLoadingAptId] = useState(null);
+
   if (!appointments || appointments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
@@ -45,6 +49,22 @@ export default function PatientAppointmentsClient({ appointments }) {
         return "danger";
       default:
         return "default";
+    }
+  };
+
+  const handlePayment = async (appointment) => {
+    setLoadingAptId(appointment._id);
+    try {
+      const response = await createStripeSession(appointment);
+      if (response.success && response.url) {
+        window.location.href = response.url; // Redirect to Stripe Checkout
+      } else {
+        toast.error(response.message || "Failed to initialize payment gateway.");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred during payment checkout.");
+    } finally {
+      setLoadingAptId(null);
     }
   };
 
@@ -160,10 +180,12 @@ export default function PatientAppointmentsClient({ appointments }) {
                     <Button 
                       color="primary" 
                       variant={apt.paymentStatus === "Paid" ? "flat" : "solid"}
-                      isDisabled={apt.paymentStatus === "Paid"}
+                      isDisabled={apt.paymentStatus === "Paid" || loadingAptId === apt._id}
+                      isLoading={loadingAptId === apt._id}
+                      onPress={() => handlePayment(apt)}
                       size="sm"
                       className="font-bold shadow-md w-full"
-                      startContent={<CreditCard className="w-4 h-4" />}
+                      startContent={apt.paymentStatus !== "Paid" && loadingAptId !== apt._id ? <CreditCard className="w-4 h-4" /> : null}
                     >
                       {apt.paymentStatus === "Paid" ? "Paid" : "Pay Now"}
                     </Button>
