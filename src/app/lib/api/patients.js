@@ -20,3 +20,21 @@ export const getPatientProfile = async (email) => {
         return { success: false, message: error.message };
     }
 };
+
+export const getPatientOverview = async (email) => {
+    try {
+        const response = await fetch(`${baseUrl}/api/v1/patient/${email}/overview`, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch patient overview");
+        }
+
+        const res = await response.json();
+        return { success: true, data: res.data };
+    } catch (error) {
+        console.error("Error fetching patient overview:", error);
+        return { success: false, message: error.message };
+    }
+};

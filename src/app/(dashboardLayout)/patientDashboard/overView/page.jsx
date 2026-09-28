@@ -7,6 +7,7 @@ import UpComming from "./UpComming";
 import Payments from "./Payments";
 import Doctors from "./Doctors";
 import Appointment from "./Appointment";
+import { getPatientOverview } from "@/app/lib/api/patients";
 
 async function DashboardContent() {
   const session = await auth.api.getSession({
@@ -53,6 +54,21 @@ async function DashboardContent() {
     );
   }
 
+  const email = session?.user?.email;
+  let overviewData = {
+    appointments: [],
+    payments: [],
+    totalPaymentsAmount: 0,
+    topDoctors: []
+  };
+
+  if (email) {
+    const res = await getPatientOverview(email);
+    if (res.success && res.data) {
+      overviewData = res.data;
+    }
+  }
+
   return (
     <>
       {/* Top Header */}
@@ -82,14 +98,14 @@ async function DashboardContent() {
         
         {/* LEFT COLUMN */}
         <div className="space-y-10">
-          <UpComming/>
-          <Payments/>
+          <UpComming appointments={overviewData.appointments} />
+          <Payments payments={overviewData.payments} totalAmount={overviewData.totalPaymentsAmount} />
         </div>
 
         {/* RIGHT COLUMN */}
         <div className="space-y-10">
-          <Doctors/>
-          <Appointment/>
+          <Doctors doctors={overviewData.topDoctors} />
+          <Appointment appointments={overviewData.appointments} />
         </div>
       </div>
     </>
