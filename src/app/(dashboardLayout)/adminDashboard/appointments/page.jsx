@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAllAppointments } from "@/app/lib/api/appoinments";
 import AppointmentsClient from "./AppointmentsClient";
 

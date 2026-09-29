@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React, { Suspense } from "react";
 import { auth } from "@/app/lib/auth";
 import { headers } from "next/headers";

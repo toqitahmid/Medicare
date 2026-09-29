@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAllReviews } from "@/app/lib/api/reviews";
 import ReviewsClient from "./ReviewsClient";
 

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAllPayments } from "@/app/lib/api/payments";
 import PaymentsClient from "./PaymentsClient";
 
