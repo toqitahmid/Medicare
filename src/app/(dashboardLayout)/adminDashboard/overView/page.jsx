@@ -44,14 +44,5 @@ export default async function AdminOverviewDashboard() {
     };
   }
 
-  return (
-    <div>
-      {res?.success === false && (
-        <div className="p-4 bg-red-500 text-white rounded mb-4">
-          Error fetching data: {res?.message || "Unknown error"}
-        </div>
-      )}
-      <OverviewClient data={dashboardData} />
-    </div>
-  );
+  return <OverviewClient data={dashboardData} />;
 }
