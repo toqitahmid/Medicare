@@ -13,7 +13,7 @@ export default async function PaymentSuccessPage({ searchParams }) {
     }
 
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         
         // 1. Retrieve the session from Stripe to ensure it's paid and valid
         const stripeRes = await retrieveStripeSession(session_id);

@@ -14,7 +14,7 @@ export const createStripeSession = async (appointment) => {
         }
 
         // Hardcoding frontend URL to avoid redirecting to the Express API backend
-        const frontendUrl = "http://localhost:3000";
+        const frontendUrl = process.env.BETTER_AUTH_URL;
 
         // Create Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -55,7 +55,7 @@ export const createStripeSession = async (appointment) => {
 
 export const savePaymentRecord = async (paymentData) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const response = await fetch(`${baseUrl}/api/v1/payments/create`, {
             method: "POST",
             headers: {

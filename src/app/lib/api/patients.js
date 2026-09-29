@@ -1,7 +1,7 @@
 "use server";
 
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getPatientProfile = async (email) => {
     try {

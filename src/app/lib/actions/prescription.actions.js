@@ -2,7 +2,7 @@
 
 export const createPrescription = async (payload) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const reqHeaders = { "Content-Type": "application/json" };
         const response = await fetch(`${baseUrl}/api/v1/prescriptions/create`, {
             method: "POST",
@@ -26,7 +26,7 @@ export const createPrescription = async (payload) => {
 export const getPrescriptionsByPatientId = async (patientId) => {
     try {
         const reqHeaders = { "Content-Type": "application/json" };
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const response = await fetch(`${baseUrl}/api/v1/prescriptions/patient/${patientId}`, {
             cache: 'no-store',
             headers: reqHeaders

@@ -2,7 +2,7 @@
 
 export const createReview = async (payload) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const response = await fetch(`${baseUrl}/api/v1/reviews/create`, {
             method: "POST",
             headers: {

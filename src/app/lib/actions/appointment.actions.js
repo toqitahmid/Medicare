@@ -2,7 +2,7 @@
 
 export const createAppointment = async (payload) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://127.0.0.1:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const reqHeaders = { "Content-Type": "application/json" };
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/create`, {
@@ -27,7 +27,7 @@ export const createAppointment = async (payload) => {
 
 export const updateAppointmentStatus = async (appointmentId, status) => {
     try {
-        const baseUrl = "http://127.0.0.1:8000";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
         const reqHeaders = { "Content-Type": "application/json" };
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/${appointmentId}/status`, {
