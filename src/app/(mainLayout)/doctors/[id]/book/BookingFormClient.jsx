@@ -48,7 +48,7 @@ export default function BookingFormClient({ doctor, user }) {
       }, 3000);
     } else {
       console.error("Booking failed:", res);
-      alert(`Booking failed: ${res.message || "Ensure backend is running!"}`);
+      alert(`Booking failed. Backend response: ${JSON.stringify(res)}`);
     }
   };
 
@@ -192,3 +192,4 @@ export default function BookingFormClient({ doctor, user }) {
     </div>
   );
 }
+

@@ -47,7 +47,7 @@ const getAuthHeaders = async () => {
 
 export const createAppointment = async (payload) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = "http://127.0.0.1:8000";
         const reqHeaders = await getAuthHeaders();
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/create`, {
@@ -59,12 +59,7 @@ export const createAppointment = async (payload) => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Backend error response:", errorText);
-            try {
-                const error = JSON.parse(errorText);
-                throw new Error(error.message || "Failed to book appointment");
-            } catch (e) {
-                throw new Error(`Failed to book appointment: ${errorText}`);
-            }
+            let backendMsg = "Failed to book appointment"; try { const parsed = JSON.parse(errorText); backendMsg = parsed.message || backendMsg; } catch (e) { backendMsg = `Failed to book appointment: ${errorText}`; } throw new Error(backendMsg);
         }
 
         const data = await response.json();
@@ -77,7 +72,7 @@ export const createAppointment = async (payload) => {
 
 export const updateAppointmentStatus = async (appointmentId, status) => {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const baseUrl = "http://127.0.0.1:8000";
         const reqHeaders = await getAuthHeaders();
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/${appointmentId}/status`, {
@@ -104,4 +99,6 @@ export const updateAppointmentStatus = async (appointmentId, status) => {
         return { success: false, message: error.message };
     }
 };
+
+
 
