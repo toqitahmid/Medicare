@@ -1,21 +1,48 @@
 "use server";
-import { authClient } from "../auth-client";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 const getAuthHeaders = async () => {
-    let tokenRes;
     try {
-        tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
+        const cookieStore = await cookies();
+        let token = null;
+
+        // Better Auth typically stores the session token in these cookies
+        const possibleCookieNames = [
+            'better-auth.session_token',
+            '__Secure-better-auth.session_token',
+            'better-auth.session',
+            '__Secure-better-auth.session',
+            'better-auth.jwt'
+        ];
+
+        for (const name of possibleCookieNames) {
+            const cookie = cookieStore.get(name);
+            if (cookie && cookie.value) {
+                token = cookie.value;
+                break;
+            }
+        }
+        
+        // If not found in common names, try searching all cookies
+        if (!token) {
+            const allCookies = cookieStore.getAll();
+            for (const cookie of allCookies) {
+                if (cookie.name.includes('jwt') || cookie.name.includes('session_token')) {
+                    token = cookie.value;
+                    break;
+                }
+            }
+        }
+        
+        const reqHeaders = { "Content-Type": "application/json" };
+        if (token) {
+            reqHeaders["Authorization"] = `Bearer ${token}`;
+        }
+        return reqHeaders;
     } catch (e) {
-        tokenRes = null;
+        console.error("Failed to read cookies:", e);
+        return { "Content-Type": "application/json" };
     }
-    const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-    
-    const reqHeaders = { "Content-Type": "application/json" };
-    if (token) {
-        reqHeaders["Authorization"] = `Bearer ${token}`;
-    }
-    return reqHeaders;
 };
 
 export const createAppointment = async (payload) => {
@@ -32,7 +59,12 @@ export const createAppointment = async (payload) => {
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Backend error response:", errorText);
-            throw new Error(`Failed to book appointment: ${errorText}`);
+            try {
+                const error = JSON.parse(errorText);
+                throw new Error(error.message || "Failed to book appointment");
+            } catch (e) {
+                throw new Error(`Failed to book appointment: ${errorText}`);
+            }
         }
 
         const data = await response.json();
@@ -72,3 +104,4 @@ export const updateAppointmentStatus = async (appointmentId, status) => {
         return { success: false, message: error.message };
     }
 };
+

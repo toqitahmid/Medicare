@@ -47,7 +47,8 @@ export default function BookingFormClient({ doctor, user }) {
         router.push("/patientDashboard/appointments");
       }, 3000);
     } else {
-      alert("Something went wrong booking your appointment. Ensure backend is running!");
+      console.error("Booking failed:", res);
+      alert(`Booking failed: ${res.message || "Ensure backend is running!"}`);
     }
   };
 
