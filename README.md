@@ -1,6 +1,6 @@
 # Medicare - Frontend Architecture & Documentation
 
-**🌐 Live Website / Demo:** [Insert your deployed Vercel/Render link here]
+**🌐 Live Website / Demo:** [https://medicare-sigma-ruddy.vercel.app/]
 
 ## 🏗 Overview
 Medicare is a full-stack healthcare web application built with Next.js (App Router). It features dedicated role-based dashboards for Patients, Doctors, and Administrators, enabling seamless appointment booking, virtual consultations, and health management.
