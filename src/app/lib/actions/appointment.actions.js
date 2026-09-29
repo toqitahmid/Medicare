@@ -1,54 +1,9 @@
 "use server";
-import { cookies } from "next/headers";
-
-const getAuthHeaders = async () => {
-    try {
-        const cookieStore = await cookies();
-        let token = null;
-
-        // Better Auth typically stores the session token in these cookies
-        const possibleCookieNames = [
-            'better-auth.session_token',
-            '__Secure-better-auth.session_token',
-            'better-auth.session',
-            '__Secure-better-auth.session',
-            'better-auth.jwt'
-        ];
-
-        for (const name of possibleCookieNames) {
-            const cookie = cookieStore.get(name);
-            if (cookie && cookie.value) {
-                token = cookie.value;
-                break;
-            }
-        }
-        
-        // If not found in common names, try searching all cookies
-        if (!token) {
-            const allCookies = cookieStore.getAll();
-            for (const cookie of allCookies) {
-                if (cookie.name.includes('jwt') || cookie.name.includes('session_token')) {
-                    token = cookie.value;
-                    break;
-                }
-            }
-        }
-        
-        const reqHeaders = { "Content-Type": "application/json" };
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
-        return reqHeaders;
-    } catch (e) {
-        console.error("Failed to read cookies:", e);
-        return { "Content-Type": "application/json" };
-    }
-};
 
 export const createAppointment = async (payload) => {
     try {
         const baseUrl = "http://127.0.0.1:8000";
-        const reqHeaders = await getAuthHeaders();
+        const reqHeaders = { "Content-Type": "application/json" };
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/create`, {
             method: "POST",
@@ -73,7 +28,7 @@ export const createAppointment = async (payload) => {
 export const updateAppointmentStatus = async (appointmentId, status) => {
     try {
         const baseUrl = "http://127.0.0.1:8000";
-        const reqHeaders = await getAuthHeaders();
+        const reqHeaders = { "Content-Type": "application/json" };
         
         const response = await fetch(`${baseUrl}/api/v1/appointments/${appointmentId}/status`, {
             method: "PATCH",

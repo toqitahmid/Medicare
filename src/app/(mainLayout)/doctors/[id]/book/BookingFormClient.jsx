@@ -6,12 +6,14 @@ import { motion } from "framer-motion";
 import { createAppointment } from "@/app/lib/actions/appointment.actions";
 import { useRouter } from "next/navigation";
 
-export default function BookingFormClient({ doctor, user }) {
+export default function BookingFormClient({ doctor }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
+    patientName: "",
+    patientEmail: "",
     appointmentDate: "",
     appointmentTime: "",
     symptoms: "",
@@ -26,8 +28,8 @@ export default function BookingFormClient({ doctor, user }) {
     setIsLoading(true);
 
     const payload = {
-      patientId: user?.email || user?.id, // using email as ID if DB objectId isn't available
-      patientName: user?.name,
+      patientId: formData.patientEmail,
+      patientName: formData.patientName,
       doctorId: doctor._id,
       doctorName: doctor.name,
       appointmentDate: formData.appointmentDate,
@@ -115,6 +117,34 @@ export default function BookingFormClient({ doctor, user }) {
           <Card className="p-8 md:p-10 bg-background/60 backdrop-blur-xl border border-default-200 shadow-medium rounded-[2.5rem]">
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-6">
+                <div>
+                  <label className="text-sm font-bold flex items-center gap-2 text-default-500 mb-3 uppercase tracking-wider">
+                    Patient Name
+                  </label>
+                  <input
+                    type="text"
+                    name="patientName"
+                    value={formData.patientName}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold flex items-center gap-2 text-default-500 mb-3 uppercase tracking-wider">
+                    Patient Email
+                  </label>
+                  <input
+                    type="email"
+                    name="patientEmail"
+                    value={formData.patientEmail}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
+                  />
+                </div>
+
                 <div>
                   <label className="text-sm font-bold flex items-center gap-2 text-default-500 mb-3 uppercase tracking-wider">
                     <CalendarIcon className="w-4 h-4" /> Select Date

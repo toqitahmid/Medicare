@@ -1,24 +1,13 @@
 "use server";
-import { authClient } from "../auth-client";
-import { headers } from "next/headers";
+
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getAppointmentsByPaitentId = async (patientId) => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
-        }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-        const reqHeaders = {};
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/${patientId}`, {
             cache: "no-store",
-            headers: reqHeaders
+            headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) {
@@ -35,20 +24,9 @@ export const getAppointmentsByPaitentId = async (patientId) => {
 
 export const getAppointmentsByDoctorId = async (doctorId) => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
-        }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-        const reqHeaders = {};
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/doctor/${doctorId}`, {
             cache: "no-store",
-            headers: reqHeaders
+            headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) {
@@ -65,20 +43,9 @@ export const getAppointmentsByDoctorId = async (doctorId) => {
 
 export const getAllAppointments = async () => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
-        }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-        const reqHeaders = {};
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${baseUrl}/api/v1/appointments/all`, {
             cache: "no-store",
-            headers: reqHeaders
+            headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) {

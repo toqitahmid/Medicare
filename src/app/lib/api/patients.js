@@ -1,25 +1,13 @@
 "use server";
 
-import { authClient } from "../auth-client";
-import { headers } from "next/headers";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
 
 export const getPatientProfile = async (email) => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
-        }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-        const reqHeaders = {};
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${baseUrl}/api/v1/patients/${email}`, {
             cache: "no-store",
-            headers: reqHeaders
+            headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) {
@@ -37,20 +25,9 @@ export const getPatientProfile = async (email) => {
 
 export const getPatientOverview = async (email) => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
-        }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
-        const reqHeaders = {};
-        if (token) {
-            reqHeaders["Authorization"] = `Bearer ${token}`;
-        }
         const response = await fetch(`${baseUrl}/api/v1/patient/${email}/overview`, {
             cache: "no-store",
-            headers: reqHeaders
+            headers: { "Content-Type": "application/json" }
         });
 
         if (!response.ok) {
