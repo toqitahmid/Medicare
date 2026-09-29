@@ -55,7 +55,7 @@ export default async function PaymentSuccessPage({ searchParams }) {
                 <p className="text-default-500 mb-8 text-lg">
                     Your appointment fee has been successfully processed. The doctor has been notified and your slot is fully confirmed.
                 </p>
-                <Link href="/dashboard/patientDashboard/appointments" className="w-full">
+                <Link href="/patientDashboard/appointments" className="w-full">
                     <Button 
                         color="primary" 
                         size="lg" 
