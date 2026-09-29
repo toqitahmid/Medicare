@@ -3,16 +3,17 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 import { authClient } from "../auth-client";
 import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 export const createDoctorProfile = async (payload) => {
     try {
-        let tokenRes;
-        try {
-            tokenRes = await authClient.token({ fetchOptions: { headers: await headers() } });
-        } catch (e) {
-            tokenRes = null;
+        const cookieStore = await cookies();
+        let token = cookieStore.get("better-auth.session_token")?.value || cookieStore.get("better-auth.jwt")?.value;
+        
+        if (!token) {
+            // fallback for secure prefix
+            token = cookieStore.get("__Secure-better-auth.session_token")?.value || cookieStore.get("__Secure-better-auth.jwt")?.value;
         }
-        const token = tokenRes?.data?.token || tokenRes?.token || (typeof tokenRes === 'string' ? tokenRes : null);
         
         const reqHeaders = {
             "Content-Type": "application/json",
