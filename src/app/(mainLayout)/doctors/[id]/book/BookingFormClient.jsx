@@ -46,7 +46,7 @@ export default function BookingFormClient({ doctor }) {
     if (res.success) {
       setIsSuccess(true);
       setTimeout(() => {
-        router.push("/patientDashboard/appointments");
+        router.push("/dashboard/patientDashboard/appointments");
       }, 3000);
     } else {
       console.error("Booking failed:", res);
