@@ -4,6 +4,8 @@ import { Avatar } from "@heroui/react";
 import { ArrowRight, Star } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { DoctorCardsSkeleton } from "@/app/ui/loading/DashboardSkeleton";
+
 const Doctors = ({ doctors = [] }) => {
     const displayDoctors = doctors.slice(0, 2);
 
@@ -17,25 +19,27 @@ const Doctors = ({ doctors = [] }) => {
                     </button>
                 </div>
 
-                <div className="bg-content1 border border-divider rounded-[2rem] p-6 grid grid-cols-2 gap-4">
+                <div className="bg-content1 border border-divider rounded-[2rem] p-6">
                     {displayDoctors.length > 0 ? (
-                        displayDoctors.map((doc, idx) => (
-                            <div key={idx} className="bg-background border border-divider rounded-2xl p-4 flex flex-col items-center text-center hover:border-default-400 transition-all cursor-pointer group">
-                                <div className="relative mb-3">
-                                    <Avatar src={doc.photo || `https://i.pravatar.cc/150?u=${doc._id}`} className="w-14 h-14" />
-                                    <div className="absolute -bottom-1 -right-1 bg-foreground text-background p-1 rounded-full shadow-md">
-                                        <Star className="w-3 h-3 fill-current text-yellow-500" />
+                        <div className="grid grid-cols-2 gap-4">
+                            {displayDoctors.map((doc, idx) => (
+                                <div key={idx} className="bg-background border border-divider rounded-2xl p-4 flex flex-col items-center text-center hover:border-default-400 transition-all cursor-pointer group">
+                                    <div className="relative mb-3">
+                                        <Avatar src={doc.photo || `https://i.pravatar.cc/150?u=${doc._id}`} className="w-14 h-14" />
+                                        <div className="absolute -bottom-1 -right-1 bg-foreground text-background p-1 rounded-full shadow-md">
+                                            <Star className="w-3 h-3 fill-current text-yellow-500" />
+                                        </div>
                                     </div>
+                                    <h4 className="font-bold text-sm text-foreground">Dr. {doc.name || "Unknown"}</h4>
+                                    <p className="text-[11px] text-default-500 font-medium mt-0.5 mb-3">{doc.specialization || "General"}</p>
+                                    <button className="w-full py-1.5 bg-default-100 hover:bg-default-200 rounded-lg text-xs font-semibold text-foreground transition-colors">
+                                        Book
+                                    </button>
                                 </div>
-                                <h4 className="font-bold text-sm text-foreground">Dr. {doc.name || "Unknown"}</h4>
-                                <p className="text-[11px] text-default-500 font-medium mt-0.5 mb-3">{doc.specialization || "General"}</p>
-                                <button className="w-full py-1.5 bg-default-100 hover:bg-default-200 rounded-lg text-xs font-semibold text-foreground transition-colors">
-                                    Book
-                                </button>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     ) : (
-                        <div className="col-span-2 text-center text-default-500 text-sm py-4">Loading doctors...</div>
+                        <DoctorCardsSkeleton count={2} />
                     )}
                 </div>
             </motion.div>

@@ -113,14 +113,12 @@ async function DashboardContent() {
   );
 }
 
+import DashboardSkeleton from "@/app/ui/loading/DashboardSkeleton";
+
 export default function PatientOverview() {
   return (
-    <div className="w-full min-h-screen text-foreground bg-background font-sans p-10">
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <Spinner size="lg" color="warning" label="Loading dashboard..." />
-        </div>
-      }>
+    <div className="w-full min-h-screen text-foreground bg-background font-sans p-2 sm:p-6 md:p-10">
+      <Suspense fallback={<DashboardSkeleton variant="patient" />}>
         <DashboardContent />
       </Suspense>
     </div>

@@ -5,6 +5,7 @@ import { authClient } from "@/app/lib/auth-client";
 import { Avatar, Chip, Tooltip, Button, Spinner } from "@heroui/react";
 import { toast } from "react-toastify";
 import { Check, X, Ban, Undo2 } from "lucide-react";
+import { TableRowsSkeleton } from "@/app/ui/loading/DashboardSkeleton";
 
 const statusColorMap = {
     approved: "success",
@@ -235,7 +236,9 @@ export default function ManageUsers() {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading && users.length === 0 ? null : users.length === 0 ? (
+                            {isLoading && users.length === 0 ? (
+                                <TableRowsSkeleton rows={5} cols={4} />
+                            ) : users.length === 0 ? (
                                 <tr>
                                     <td colSpan="4" className="py-12 text-center text-default-500">
                                         No users found
