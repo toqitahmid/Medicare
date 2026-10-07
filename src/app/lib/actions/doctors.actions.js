@@ -1,4 +1,6 @@
 "use server";
+import { revalidatePath, revalidateTag } from "next/cache";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const createDoctorProfile = async (payload) => {
@@ -19,6 +21,13 @@ export const createDoctorProfile = async (payload) => {
 
         if (!response.ok) {
             throw new Error(data.message || "Failed to create doctor profile");
+        }
+
+        try {
+            revalidateTag("doctors");
+            revalidatePath("/doctors");
+        } catch (e) {
+            console.warn("Revalidation warning:", e);
         }
 
         return { success: true, data };

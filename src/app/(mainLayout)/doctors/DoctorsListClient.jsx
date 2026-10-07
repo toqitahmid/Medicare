@@ -1,13 +1,28 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, Button, Pagination } from "@heroui/react";
 import { motion } from "framer-motion";
 import { Search, Briefcase, Clock, DollarSign, Award, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function DoctorsListClient({ doctors, initialSpecialization = "" }) {
+  const searchParams = useSearchParams();
+  const specializationParam = searchParams?.get("specialization") || initialSpecialization;
+
+  return (
+    <DoctorsListView
+      key={specializationParam}
+      doctors={doctors}
+      initialQuery={specializationParam}
+    />
+  );
+}
+
+function DoctorsListView({ doctors, initialQuery = "" }) {
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(initialSpecialization);
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const rowsPerPage = 6;
 
   const filteredDoctors = useMemo(() => {
@@ -61,7 +76,7 @@ export default function DoctorsListClient({ doctors, initialSpecialization = "" 
                   <div className="w-20 h-20 shrink-0 rounded-3xl bg-primary/10 flex items-center justify-center overflow-hidden border-2 border-background shadow-md">
                     {doctor.photo ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
-                      <img src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-default-200" />
                     )}

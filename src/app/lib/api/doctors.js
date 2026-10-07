@@ -3,9 +3,11 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 export const getAllDoctors = async () => {
     try {
-        // Adding cache: "no-store" to ensure we get the latest list of doctors
         const response = await fetch(`${baseUrl}/api/v1/doctors/all`, {
-            cache: "no-store",
+            next: {
+               revalidate: 10,
+               tags: ["doctors"]
+            },
             headers: { "Content-Type": "application/json" }
         });
 

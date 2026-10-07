@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 const specializations = [
-  { icon: HeartPulse, name: "Cardiology" },
+  { icon: HeartPulse, name: "Cardiologist" },
   { icon: Brain, name: "Neurology" },
   { icon: Activity, name: "Orthopedic" },
   { icon: Baby, name: "Pediatrics" },

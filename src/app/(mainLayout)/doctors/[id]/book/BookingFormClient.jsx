@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { createAppointment } from "@/app/lib/actions/appointment.actions";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/app/lib/auth-client";
+import Image from "next/image";
 
 export default function BookingFormClient({ doctor }) {
   const router = useRouter();
@@ -89,7 +90,7 @@ export default function BookingFormClient({ doctor }) {
               <div className="w-24 h-24 rounded-2xl bg-primary/10 overflow-hidden mb-4">
                 {doctor.photo ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover" />
+                  <Image src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-default-200" />
                 )}

@@ -1,18 +1,23 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { getAllDoctors } from "@/app/lib/api/doctors";
 import DoctorsListClient from "./DoctorsListClient";
+import MainLayoutLoading from "@/app/(mainLayout)/loading";
 
 export const metadata = {
   title: "Our Specialists | Medicare",
   description: "Browse our network of qualified medical specialists and book your consultation.",
 };
 
-export default async function DoctorsPage({ searchParams }) {
-  const params = await Promise.resolve(searchParams);
-  const specialization = params?.specialization || "";
-  
+// ISR: Cache and revalidate the page in the background
+export const revalidate = 10;
+
+export default async function DoctorsPage() {
   const response = await getAllDoctors();
   const doctors = response?.success ? response.data : [];
 
-  return <DoctorsListClient doctors={doctors} initialSpecialization={specialization} />;
+  return (
+    <Suspense fallback={<MainLayoutLoading />}>
+      <DoctorsListClient doctors={doctors} />
+    </Suspense>
+  );
 }
