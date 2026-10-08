@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { Card, Button } from "@heroui/react";
+import React, { useState, useEffect } from "react";
+import { Card, Button, Spinner } from "@heroui/react";
 import { Calendar as CalendarIcon, Clock, Activity, Send, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { createAppointment } from "@/app/lib/actions/appointment.actions";
@@ -10,7 +10,7 @@ import Image from "next/image";
 
 export default function BookingFormClient({ doctor }) {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -21,17 +21,31 @@ export default function BookingFormClient({ doctor }) {
     symptoms: "",
   });
 
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.replace("/login");
+    }
+  }, [session, isPending, router]);
+
+  const patientNameValue = formData.patientName !== "" ? formData.patientName : (session?.user?.name || "");
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!session?.user) {
+      router.push("/login");
+      return;
+    }
+
     setIsLoading(true);
 
     const payload = {
-      patientId: session?.user?.email,
-      patientName: formData.patientName,
+      patientId: session.user.email,
+      patientName: patientNameValue,
       doctorId: doctor._id,
       doctorName: doctor.name,
       appointmentDate: formData.appointmentDate,
@@ -55,6 +69,19 @@ export default function BookingFormClient({ doctor }) {
       alert(`Booking failed. Backend response: ${JSON.stringify(res)}`);
     }
   };
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Spinner size="lg" label="Checking authentication..." color="primary" />
+      </div>
+    );
+  }
+
+  if (!session?.user) {
+    return null;
+  }
+
 
   if (isSuccess) {
     return (
@@ -89,8 +116,7 @@ export default function BookingFormClient({ doctor }) {
             <div className="flex flex-col items-center text-center">
               <div className="w-24 h-24 rounded-2xl bg-primary/10 overflow-hidden mb-4">
                 {doctor.photo ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <Image src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover" />
+                  <Image src={doctor.photo} alt={doctor.name} width={400} height={400} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full bg-default-200" />
                 )}
@@ -126,7 +152,7 @@ export default function BookingFormClient({ doctor }) {
                   <input
                     type="text"
                     name="patientName"
-                    value={formData.patientName}
+                    value={patientNameValue}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all"
@@ -186,7 +212,7 @@ export default function BookingFormClient({ doctor }) {
                     onChange={handleChange}
                     rows={4}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all resize-y min-h-[100px]"
+                    className="w-full px-4 py-3 rounded-xl border border-default-200 bg-default-100/50 backdrop-blur-md text-foreground text-sm outline-none focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all resize-y min-h-25"
                   />
                 </div>
               </div>

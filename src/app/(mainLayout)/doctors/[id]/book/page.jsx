@@ -1,6 +1,9 @@
+export const dynamic = "force-dynamic";
 import React from "react";
 import { getDoctorProfile } from "@/app/lib/api/doctors";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/app/lib/auth";
+import { headers } from "next/headers";
 import BookingFormClient from "./BookingFormClient";
 
 export async function generateMetadata({ params }) {
@@ -13,6 +16,14 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function BookingPage({ params }) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session || !session.user) {
+    redirect("/login");
+  }
+
   const { id: email } = await params;
   
   const response = await getDoctorProfile(decodeURIComponent(email));
@@ -28,3 +39,4 @@ export default async function BookingPage({ params }) {
     </div>
   );
 }
+

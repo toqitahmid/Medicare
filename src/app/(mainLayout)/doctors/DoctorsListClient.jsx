@@ -75,8 +75,7 @@ function DoctorsListView({ doctors, initialQuery = "" }) {
                 <div className="flex items-start gap-5">
                   <div className="w-20 h-20 shrink-0 rounded-3xl bg-primary/10 flex items-center justify-center overflow-hidden border-2 border-background shadow-md">
                     {doctor.photo ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <Image src={doctor.photo} alt={doctor.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <Image src={doctor.photo} alt={doctor.name} width={200} height={100} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-default-200" />
                     )}

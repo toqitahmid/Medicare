@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 const specializations = [
   { icon: HeartPulse, name: "Cardiologist" },
-  { icon: Brain, name: "Neurology" },
+  { icon: Brain, name: "Neurologist" },
   { icon: Activity, name: "Orthopedic" },
   { icon: Baby, name: "Pediatrics" },
-  { icon: Sparkles, name: "Dermatology" },
+  { icon: Sparkles, name: "Dermatologist" },
 ];
 
 const Specialization = () => {
