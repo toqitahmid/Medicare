@@ -66,7 +66,7 @@ export default function BookingFormClient({ doctor }) {
       }, 3000);
     } else {
       console.error("Booking failed:", res);
-      alert(`Booking failed. Backend response: ${JSON.stringify(res)}`);
+      alert(`Booking failed`);
     }
   };
 
